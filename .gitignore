@@ -1,0 +1,9 @@
+# Modules
+node_modules
+
+# Environments
+.env
+
+# Temp files
+temp_files/*
+!temp_files/temp_files

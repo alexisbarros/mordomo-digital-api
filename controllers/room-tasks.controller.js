@@ -1,13 +1,28 @@
 // Modules
 const mongoose = require('mongoose');
+const fs = require('fs');
+const multer = require('multer');
 
 // Model
-const Room = require('../models/rooms.model');
-const RoomType = require('../models/room-types.model');
 const RoomTask = require('../models/room-tasks.modal');
 
 /**
- * Register room in db.
+ * Method to save image in server
+ */
+const storage = multer.diskStorage({
+
+    destination: function (req, file, cb) {
+        cb(null, './temp_files');
+    },
+
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
+    }
+});
+exports.uploadImg = multer({ storage: storage }).single('image');
+
+/**
+ * Register roomTask in db.
  * @param {*} req 
  * @param {*} res 
  */
@@ -20,32 +35,34 @@ exports.create = async (req, res) => {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
+        
+        // Create image buffer to put in mongod
+        let image = {
+            data: fs.readFileSync(req.file.path),
+            type: req.file.mimetype
+        }
 
-        // Create room in database
-        let room = await Room.create({
+        // Create roomTask in database
+        let roomTask = await RoomTask.create({
             name: req.body.name,
-            roomType: req.body.roomType,
-            tasks: req.body.tasks,
-            user: req.body.user,
+            icon: image,
         });
     
         // Disconnect to database
         await mongoose.disconnect();
 
-        // Create room data to return
-        let roomToFront = {
-            _id: room._id,
-            _createdAt: room._createdAt,
-            name: room.name,
-            roomType: room.roomType,
-            tasks: room.tasks,
-            user: room.user,
+        // Create roomTask data to return
+        let roomTaskToFront = {
+            _id: roomTask._id,
+            _createdAt: roomTask._createdAt,
+            name: roomTask.name,
+            icon: roomTask.icon,
         };
         
-        console.info('Room created successfuly');
+        console.info('RoomTask created successfuly');
         res.send({
-            data: roomToFront,
-            message: 'Room created successfuly',
+            data: roomTaskToFront,
+            message: 'RoomTask created successfuly',
             code: 200
         });
 
@@ -66,7 +83,7 @@ exports.create = async (req, res) => {
 };
 
 /**
- * Get one room by id.
+ * Get one roomTask by id.
  * @param {*} req 
  * @param {*} res 
  */
@@ -80,43 +97,27 @@ exports.readOne = async (req, res) => {
             useUnifiedTopology: true
         });
         
-        // Get room by id
-        let room = await Room.findById(req.params.id);
+        // Get roomTask by id
+        let roomTask = await RoomTask.findById(req.params.id);
         
-        // Check if room was removed
-        if(room._deletedAt) throw { message: 'Room removed' };
+        // Check if roomTask was removed
+        if(roomTask._deletedAt) throw { message: 'RoomTask removed' };
 
-        // Get roomType
-        let roomType = await RoomType.findById(room.roomType);
-
-        // Get all tasks
-        let tasksFromDb = await RoomTask.find();
-        let tasks = room.tasks.map(el => {
-            let data = tasksFromDb.find(t => t._id === el.task);
-            console.log(data);
-            return {
-                ...el,
-                data
-            }
-        });
-
-        // Create room data to return
-        let roomToFront = {
-            _id: room._id,
-            _createdAt: room._createdAt,
-            name: room.name,
-            roomType: roomType,
-            tasks: tasks,
-            user: room.user
+        // Create roomTask data to return
+        let roomTaskToFront = {
+            _id: roomTask._id,
+            _createdAt: roomTask._createdAt,
+            name: roomTask.name,
+            icon: roomTask.icon
         };
         
         // Disconnect to database
         await mongoose.disconnect();
         
-        console.info('Room returned successfully');
+        console.info('RoomTask returned successfully');
         res.send({
-            data: roomToFront,
-            message: 'Room returned successfully',
+            data: roomTaskToFront,
+            message: 'RoomTask returned successfully',
             code: 200
         });
 
@@ -137,7 +138,7 @@ exports.readOne = async (req, res) => {
 }
 
 /**
- * Get all rooms from a user.
+ * Get all roomTasks.
  * @param {*} req 
  * @param {*} res 
  */
@@ -151,45 +152,29 @@ exports.readAll = async (req, res) => {
             useUnifiedTopology: true
         });
         
-        // Get all rooms
-        let rooms = await Room.find({
-            user: req.params.id
-        });
+        // Get all roomTasks
+        let roomTasks = await RoomTask.find({});
 
-        // Filter room tha wasnt removed
-        let roomsToFront = rooms.filter(room => !room._deletedAt);
+        // Filter roomTask tha wasnt removed
+        let roomTasksToFront = roomTasks.filter(roomTask => !roomTask._deletedAt);
 
-        // Create room data to return
-        roomsToFront = roomsToFront.map(async room => {
-            
-            // Get roomType
-            let roomType = await RoomType.findById(room.roomType);
-
-            // Get all tasks
-            let tasks = room.tasks.map(async el => {
-                return {
-                    ...el, 
-                    data: await RoomTask.findById(el.task)
-                }
-            });
-
+        // Create roomTask data to return
+        roomTasksToFront = roomTasksToFront.map(roomTask => {
             return {
-                _id: room._id,
-                _createdAt: room._createdAt,
-                name: room.name,
-                roomType: roomType,
-                tasks: tasks,
-                user: room.user,
+                _id: roomTask._id,
+                _createdAt: roomTask._createdAt,
+                name: roomTask.name,
+                icon: roomTask.icon
             };
         });
         
         // Disconnect to database
         await mongoose.disconnect();
         
-        console.info('Rooms returned successfully');
+        console.info('RoomTasks returned successfully');
         res.send({
-            data: roomsToFront,
-            message: 'Rooms returned successfully',
+            data: roomTasksToFront,
+            message: 'RoomTasks returned successfully',
             code: 200
         });
 
@@ -210,7 +195,7 @@ exports.readAll = async (req, res) => {
 };
 
 /**
- * Update a room.
+ * Update a roomTask.
  * @param {*} req 
  * @param {*} res 
  */
@@ -226,26 +211,24 @@ exports.update = async (req, res) => {
 
         let formUpdated = { ...req.body };
     
-        // Update room data
-        let room = await Room.findByIdAndUpdate(req.params.id, formUpdated);
+        // Update roomTask data
+        let roomTask = await RoomTask.findByIdAndUpdate(req.params.id, formUpdated);
     
         // Disconnect to database
         await mongoose.disconnect();
 
-        // Create room data to return
-        let roomToFront = {
-            _id: room._id,
-            _createdAt: room._createdAt,
-            name: room.name,
-            roomType: room.roomType,
-            tasks: room.tasks,
-            user: room.user
+        // Create roomTask data to return
+        let roomTaskToFront = {
+            _id: roomTask._id,
+            _createdAt: roomTask._createdAt,
+            name: roomTask.name,
+            icon: roomTask.icon
         };
         
-        console.info('Room updated successfuly');
+        console.info('RoomTask updated successfuly');
         res.send({
-            data: roomToFront,
-            message: 'Room updated successfuly',
+            data: roomTaskToFront,
+            message: 'RoomTask updated successfuly',
             code: 200
         });
 
@@ -266,7 +249,7 @@ exports.update = async (req, res) => {
 };
 
 /**
- * Delete a room.
+ * Delete a roomTask.
  * @param {*} req 
  * @param {*} res 
  */
@@ -280,16 +263,16 @@ exports.delete = async (req, res) => {
             useUnifiedTopology: true
         });
         
-        // Delete room by id
-        await Room.findByIdAndUpdate(req.params.id, { _deletedAt: Date.now() });
+        // Delete roomTask by id
+        await RoomTask.findByIdAndUpdate(req.params.id, { _deletedAt: Date.now() });
     
         // Disconnect to database
         await mongoose.disconnect();
     
-        console.info('Room deleted successfuly');
+        console.info('RoomTask deleted successfuly');
         res.send({
             data: {},
-            message: 'Room deleted successfuly',
+            message: 'RoomTask deleted successfuly',
             code: 200
         });
         

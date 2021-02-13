@@ -3,6 +3,35 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
+// Task Schema to put in room
+let TaskSchemaWithFrequency = new Schema({
+    
+    task: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'RoomTask',
+        required: true
+    },
+
+    frequency: {
+        type: String,
+        required: false,
+        enum: [
+            'Daily',
+            'Weekly',
+            'Monthly',
+            'Yearly'
+        ],
+        default: 'Daily'
+    },
+
+    initialDate: {
+        type: Date,
+        required: false,
+        default: Date.now()
+    }
+
+});
+
 // Schema
 let RoomSchema = new Schema({
 
@@ -16,6 +45,10 @@ let RoomSchema = new Schema({
         ref: 'RoomType',
         required: true
     },
+
+    tasks: [
+        TaskSchemaWithFrequency
+    ],
     
     user: {
         type: mongoose.Schema.Types.ObjectId,

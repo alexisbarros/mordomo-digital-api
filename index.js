@@ -8,6 +8,7 @@ const cors = require('cors');
 const usersRoutes = require('./routes/users.route');
 const authRoutes = require('./routes/auth.route');
 const roomTypesRoutes = require('./routes/room-types.route');
+const roomTasksRoutes = require('./routes/room-tasks.route');
 const roomsRoutes = require('./routes/rooms.route');
 
 // Middlewares
@@ -32,6 +33,7 @@ app.use(bodyParser.json());
 app.use('/users', usersRoutes);
 app.use('/auth', authRoutes);
 app.use('/room-types', authMiddleware, roomTypesRoutes);
+app.use('/room-tasks', authMiddleware, roomTasksRoutes);
 app.use('/rooms', authMiddleware, roomsRoutes);
 
 // Run server

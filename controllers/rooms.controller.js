@@ -81,31 +81,27 @@ exports.readOne = async (req, res) => {
         });
         
         // Get room by id
-        let room = await Room.findById(req.params.id);
+        let room = await Room.findById(req.params.id)
+        .populate('roomType')
+        .populate({
+            path: 'tasks',
+            populate: {
+                path: 'task'
+            }
+        }).exec();
         
         // Check if room was removed
         if(room._deletedAt) throw { message: 'Room removed' };
 
-        // Get roomType
-        let roomType = await RoomType.findById(room.roomType);
-
-        // Get all tasks
-        let tasksFromDb = await RoomTask.find();
-        let tasks = room.tasks.map(el => {
-            let data = tasksFromDb.find(t => t._id === el.task);
-            console.log(data);
-            return {
-                ...el,
-                data
-            }
-        });
+        // Remove db deleted tasks
+        let tasks = room.tasks.filter(el => !el._deletedAt);
 
         // Create room data to return
         let roomToFront = {
             _id: room._id,
             _createdAt: room._createdAt,
             name: room.name,
-            roomType: roomType,
+            roomType: room.roomType,
             tasks: tasks,
             user: room.user
         };
@@ -154,30 +150,29 @@ exports.readAll = async (req, res) => {
         // Get all rooms
         let rooms = await Room.find({
             user: req.params.id
-        });
+        })
+        .populate('roomType')
+        .populate({
+            path: 'tasks',
+            populate: {
+                path: 'task'
+            }
+        }).exec();
 
         // Filter room tha wasnt removed
         let roomsToFront = rooms.filter(room => !room._deletedAt);
 
         // Create room data to return
-        roomsToFront = roomsToFront.map(async room => {
+        roomsToFront = roomsToFront.map(room => {
             
-            // Get roomType
-            let roomType = await RoomType.findById(room.roomType);
-
-            // Get all tasks
-            let tasks = room.tasks.map(async el => {
-                return {
-                    ...el, 
-                    data: await RoomTask.findById(el.task)
-                }
-            });
+            // Remove db deleted tasks
+            let tasks = room.tasks.filter(el => !el._deletedAt);
 
             return {
                 _id: room._id,
                 _createdAt: room._createdAt,
                 name: room.name,
-                roomType: roomType,
+                roomType: room.roomType,
                 tasks: tasks,
                 user: room.user,
             };

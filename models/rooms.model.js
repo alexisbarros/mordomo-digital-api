@@ -32,6 +32,33 @@ let TaskSchemaWithFrequency = new Schema({
 
 });
 
+// Market Item Schema to put in room
+let MarketItemSchemaWithQtd = new Schema({
+    
+    item: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'RoomMarketItem',
+        required: true
+    },
+
+    qtd: {
+        type: Number,
+        required: false
+    },
+
+    obs: {
+        type: String,
+        required: false
+    },
+    
+    checked: {
+        type: Boolean,
+        required: true,
+        default: false
+    }
+
+});
+
 // Schema
 let RoomSchema = new Schema({
 
@@ -48,6 +75,10 @@ let RoomSchema = new Schema({
 
     tasks: [
         TaskSchemaWithFrequency
+    ],
+    
+    marketList: [
+        MarketItemSchemaWithQtd
     ],
     
     user: {

@@ -16,6 +16,20 @@ let RoomTypeSchema = new Schema({
         contentType: String,
     },
 
+    tasks: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'RoomTask'
+        }
+    ],
+
+    marketItens: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'RoomMarketItem'
+        }
+    ],
+
     _createdAt: { 
         type: Date,
         required: true,

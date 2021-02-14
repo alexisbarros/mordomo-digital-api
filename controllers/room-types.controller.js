@@ -46,6 +46,8 @@ exports.create = async (req, res) => {
         let roomType = await RoomType.create({
             name: req.body.name,
             icon: image,
+            tasks: req.body.tasks,
+            marketItens: req.body.marketItens,
         });
     
         // Disconnect to database
@@ -57,6 +59,8 @@ exports.create = async (req, res) => {
             _createdAt: roomType._createdAt,
             name: roomType.name,
             icon: roomType.icon,
+            tasks: roomType.tasks,
+            marketItens: roomType.marketItens,
         };
         
         console.info('RoomType created successfuly');
@@ -98,7 +102,9 @@ exports.readOne = async (req, res) => {
         });
         
         // Get roomType by id
-        let roomType = await RoomType.findById(req.params.id);
+        let roomType = await RoomType.findById(req.params.id)
+        .populate('tasks')
+        .populate('marketItens');
         
         // Check if roomType was removed
         if(roomType._deletedAt) throw { message: 'RoomType removed' };
@@ -108,7 +114,9 @@ exports.readOne = async (req, res) => {
             _id: roomType._id,
             _createdAt: roomType._createdAt,
             name: roomType.name,
-            icon: roomType.icon
+            icon: roomType.icon,
+            tasks: roomType.tasks,
+            marketItens: roomType.marketItens
         };
         
         // Disconnect to database
@@ -153,7 +161,9 @@ exports.readAll = async (req, res) => {
         });
         
         // Get all roomTypes
-        let roomTypes = await RoomType.find({});
+        let roomTypes = await RoomType.find({})
+        .populate('tasks')
+        .populate('marketItens');
 
         // Filter roomType tha wasnt removed
         let roomTypesToFront = roomTypes.filter(roomType => !roomType._deletedAt);
@@ -164,7 +174,9 @@ exports.readAll = async (req, res) => {
                 _id: roomType._id,
                 _createdAt: roomType._createdAt,
                 name: roomType.name,
-                icon: roomType.icon
+                icon: roomType.icon,
+                tasks: roomType.tasks,
+                marketItens: roomType.marketItens,
             };
         });
         
@@ -222,7 +234,9 @@ exports.update = async (req, res) => {
             _id: roomType._id,
             _createdAt: roomType._createdAt,
             name: roomType.name,
-            icon: roomType.icon
+            icon: roomType.icon,
+            tasks: roomType.tasks,
+            marketItens: roomType.marketItens
         };
         
         console.info('RoomType updated successfuly');

@@ -46,8 +46,8 @@ exports.create = async (req, res) => {
         let roomType = await RoomType.create({
             name: req.body.name,
             icon: image,
-            tasks: req.body.tasks,
-            marketItens: req.body.marketItens,
+            tasks: JSON.parse(req.body.tasks),
+            marketItens: JSON.parse(req.body.marketItens),
         });
     
         // Disconnect to database
@@ -221,7 +221,11 @@ exports.update = async (req, res) => {
             useUnifiedTopology: true
         });
 
-        let formUpdated = { ...req.body };
+        let formUpdated = { 
+            ...req.body,
+            tasks: JSON.parse(req.body.tasks),
+            marketItens: JSON.parse(req.body.marketItens),
+        };
     
         // Update roomType data
         let roomType = await RoomType.findByIdAndUpdate(req.params.id, formUpdated);

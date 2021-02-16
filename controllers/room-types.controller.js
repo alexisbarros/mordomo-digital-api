@@ -221,11 +221,21 @@ exports.update = async (req, res) => {
             useUnifiedTopology: true
         });
 
+        // Create image buffer to put in mongod
+        let image = req.file ? {
+            data: fs.readFileSync(req.file.path),
+            type: req.file.mimetype
+        } : null
+
+        // Create roomTask in database
         let formUpdated = { 
             ...req.body,
             tasks: JSON.parse(req.body.tasks),
             marketItens: JSON.parse(req.body.marketItens),
         };
+        if(image){
+            formUpdated['icon'] = image;
+        }
     
         // Update roomType data
         let roomType = await RoomType.findByIdAndUpdate(req.params.id, formUpdated);

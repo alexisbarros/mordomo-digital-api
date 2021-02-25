@@ -23,13 +23,6 @@ let RoomTypeSchema = new Schema({
         }
     ],
 
-    marketItens: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'RoomMarketItem'
-        }
-    ],
-
     _createdAt: { 
         type: Date,
         required: true,

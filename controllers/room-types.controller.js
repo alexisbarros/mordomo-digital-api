@@ -47,7 +47,6 @@ exports.create = async (req, res) => {
             name: req.body.name,
             icon: image,
             tasks: JSON.parse(req.body.tasks),
-            marketItens: JSON.parse(req.body.marketItens),
         });
     
         // Disconnect to database
@@ -60,7 +59,6 @@ exports.create = async (req, res) => {
             name: roomType.name,
             icon: roomType.icon,
             tasks: roomType.tasks,
-            marketItens: roomType.marketItens,
         };
         
         console.info('RoomType created successfuly');
@@ -103,8 +101,7 @@ exports.readOne = async (req, res) => {
         
         // Get roomType by id
         let roomType = await RoomType.findById(req.params.id)
-        .populate('tasks')
-        .populate('marketItens');
+        .populate('tasks');
         
         // Check if roomType was removed
         if(roomType._deletedAt) throw { message: 'RoomType removed' };
@@ -116,7 +113,6 @@ exports.readOne = async (req, res) => {
             name: roomType.name,
             icon: roomType.icon,
             tasks: roomType.tasks,
-            marketItens: roomType.marketItens
         };
         
         // Disconnect to database
@@ -162,8 +158,7 @@ exports.readAll = async (req, res) => {
         
         // Get all roomTypes
         let roomTypes = await RoomType.find({})
-        .populate('tasks')
-        .populate('marketItens');
+        .populate('tasks');
 
         // Filter roomType tha wasnt removed
         let roomTypesToFront = roomTypes.filter(roomType => !roomType._deletedAt);
@@ -176,7 +171,6 @@ exports.readAll = async (req, res) => {
                 name: roomType.name,
                 icon: roomType.icon,
                 tasks: roomType.tasks,
-                marketItens: roomType.marketItens,
             };
         });
         
@@ -231,7 +225,6 @@ exports.update = async (req, res) => {
         let formUpdated = { 
             ...req.body,
             tasks: JSON.parse(req.body.tasks),
-            marketItens: JSON.parse(req.body.marketItens),
         };
         if(image){
             formUpdated['icon'] = image;
@@ -250,7 +243,6 @@ exports.update = async (req, res) => {
             name: roomType.name,
             icon: roomType.icon,
             tasks: roomType.tasks,
-            marketItens: roomType.marketItens
         };
         
         console.info('RoomType updated successfuly');

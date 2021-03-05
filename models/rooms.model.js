@@ -24,11 +24,22 @@ let TaskSchemaWithFrequency = new Schema({
         default: 'Daily'
     },
 
-    initialDate: {
-        type: Date,
+    weekdays: [
+        {
+            type: String,
+            required: false,
+        }
+    ],
+
+    day: {
+        type: String,
         required: false,
-        default: Date.now()
-    }
+    },
+
+    date: {
+        type: String,
+        required: false,
+    },
 
 });
 

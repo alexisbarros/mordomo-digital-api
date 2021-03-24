@@ -9,7 +9,8 @@ const usersRoutes = require('./routes/users.route');
 const authRoutes = require('./routes/auth.route');
 const roomTypesRoutes = require('./routes/room-types.route');
 const roomTasksRoutes = require('./routes/room-tasks.route');
-const roomMarketItensRoutes = require('./routes/room-market-itens.route');
+const marketItensRoutes = require('./routes/market-itens.route');
+const marketCartRoutes = require('./routes/market-cart.route');
 const roomsRoutes = require('./routes/rooms.route');
 const menuOptionsRoutes = require('./routes/menu-options.route');
 const menuGroupsRoutes = require('./routes/menu-groups.route');
@@ -37,14 +38,15 @@ app.use('/users', usersRoutes);
 app.use('/auth', authRoutes);
 app.use('/room-types', authMiddleware, roomTypesRoutes);
 app.use('/room-tasks', authMiddleware, roomTasksRoutes);
-app.use('/room-market-itens', authMiddleware, roomMarketItensRoutes);
+app.use('/market-itens', authMiddleware, marketItensRoutes);
+app.use('/market-cart', authMiddleware, marketCartRoutes);
 app.use('/rooms', authMiddleware, roomsRoutes);
 app.use('/menu-options', authMiddleware, menuOptionsRoutes);
 app.use('/menu-groups', authMiddleware, menuGroupsRoutes);
 
 // Run server
 app.listen(port, () => {
-    
+
     console.log(`Listening on port: ${port}`);
 
 })

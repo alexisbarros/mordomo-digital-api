@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 
 // Task Schema to put in room
 let TaskSchemaWithFrequency = new Schema({
-    
+
     task: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'RoomTask',
@@ -43,33 +43,6 @@ let TaskSchemaWithFrequency = new Schema({
 
 });
 
-// Market Item Schema to put in room
-let MarketItemSchemaWithQtd = new Schema({
-    
-    item: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'RoomMarketItem',
-        required: true
-    },
-
-    qtd: {
-        type: Number,
-        required: false
-    },
-
-    obs: {
-        type: String,
-        required: false
-    },
-    
-    checked: {
-        type: Boolean,
-        required: true,
-        default: false
-    }
-
-});
-
 // Schema
 let RoomSchema = new Schema({
 
@@ -87,32 +60,28 @@ let RoomSchema = new Schema({
     tasks: [
         TaskSchemaWithFrequency
     ],
-    
-    marketList: [
-        MarketItemSchemaWithQtd
-    ],
-    
+
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
 
-    _createdAt: { 
+    _createdAt: {
         type: Date,
         required: true,
         default: () => {
-            if(!this._createdAt) {            
+            if (!this._createdAt) {
                 return Date.now();
             }
         },
     },
 
-    _updatedAt: { 
+    _updatedAt: {
         type: Date,
         required: true,
         default: () => {
-            if(!this._updatedAt) {            
+            if (!this._updatedAt) {
                 return Date.now();
             }
         },

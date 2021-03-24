@@ -2,48 +2,48 @@
 const mongoose = require('mongoose');
 
 // Model
-const RoomMarketItem = require('../models/room-market-itens.modal');
+const MarketItem = require('../models/market-itens.model');
 
 /**
- * Register roomMarketItem in db.
+ * Register marketItem in db.
  * @param {*} req 
  * @param {*} res 
  */
 exports.create = async (req, res) => {
 
     try {
-        
+
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
 
-        // Create roomMarketItem in database
-        let roomMarketItem = await RoomMarketItem.create({
+        // Create marketItem in database
+        let marketItem = await MarketItem.create({
             name: req.body.name,
             type: req.body.type,
         });
-    
+
         // Disconnect to database
         await mongoose.disconnect();
 
-        // Create roomMarketItem data to return
+        // Create marketItem data to return
         let roomTypeToFront = {
-            _id: roomMarketItem._id,
-            _createdAt: roomMarketItem._createdAt,
-            name: roomMarketItem.name,
-            type: roomMarketItem.type,
+            _id: marketItem._id,
+            _createdAt: marketItem._createdAt,
+            name: marketItem.name,
+            type: marketItem.type,
         };
-        
-        console.info('RoomMarketItem created successfuly');
+
+        console.info('MarketItem created successfuly');
         res.send({
             data: roomTypeToFront,
-            message: 'RoomMarketItem created successfuly',
+            message: 'MarketItem created successfuly',
             code: 200
         });
 
-    } catch(err) {
+    } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
@@ -60,7 +60,7 @@ exports.create = async (req, res) => {
 };
 
 /**
- * Get one roomMarketItem by id.
+ * Get one marketItem by id.
  * @param {*} req 
  * @param {*} res 
  */
@@ -69,36 +69,36 @@ exports.readOne = async (req, res) => {
     try {
 
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        
-        // Get roomMarketItem by id
-        let roomMarketItem = await RoomMarketItem.findById(req.params.id);
-        
-        // Check if roomMarketItem was removed
-        if(roomMarketItem._deletedAt) throw { message: 'RoomMarketItem removed' };
 
-        // Create roomMarketItem data to return
+        // Get marketItem by id
+        let marketItem = await MarketItem.findById(req.params.id);
+
+        // Check if marketItem was removed
+        if (marketItem._deletedAt) throw { message: 'MarketItem removed' };
+
+        // Create marketItem data to return
         let roomTypeToFront = {
-            _id: roomMarketItem._id,
-            _createdAt: roomMarketItem._createdAt,
-            name: roomMarketItem.name,
-            type: roomMarketItem.type
+            _id: marketItem._id,
+            _createdAt: marketItem._createdAt,
+            name: marketItem.name,
+            type: marketItem.type
         };
-        
+
         // Disconnect to database
         await mongoose.disconnect();
-        
-        console.info('RoomMarketItem returned successfully');
+
+        console.info('MarketItem returned successfully');
         res.send({
             data: roomTypeToFront,
-            message: 'RoomMarketItem returned successfully',
+            message: 'MarketItem returned successfully',
             code: 200
         });
 
-    } catch(err) {
+    } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
@@ -115,47 +115,47 @@ exports.readOne = async (req, res) => {
 }
 
 /**
- * Get all roomMarketItens.
+ * Get all marketItens.
  * @param {*} req 
  * @param {*} res 
  */
 exports.readAll = async (req, res) => {
 
     try {
-        
+
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        
-        // Get all roomMarketItens
-        let roomMarketItens = await RoomMarketItem.find({});
 
-        // Filter roomMarketItem tha wasnt removed
-        let roomTypesToFront = roomMarketItens.filter(roomMarketItem => !roomMarketItem._deletedAt);
+        // Get all marketItens
+        let marketItens = await MarketItem.find({});
 
-        // Create roomMarketItem data to return
-        roomTypesToFront = roomTypesToFront.map(roomMarketItem => {
+        // Filter marketItem tha wasnt removed
+        let roomTypesToFront = marketItens.filter(marketItem => !marketItem._deletedAt);
+
+        // Create marketItem data to return
+        roomTypesToFront = roomTypesToFront.map(marketItem => {
             return {
-                _id: roomMarketItem._id,
-                _createdAt: roomMarketItem._createdAt,
-                name: roomMarketItem.name,
-                type: roomMarketItem.type
+                _id: marketItem._id,
+                _createdAt: marketItem._createdAt,
+                name: marketItem.name,
+                type: marketItem.type
             };
         });
-        
+
         // Disconnect to database
         await mongoose.disconnect();
-        
-        console.info('RoomMarketItens returned successfully');
+
+        console.info('MarketItens returned successfully');
         res.send({
             data: roomTypesToFront,
-            message: 'RoomMarketItens returned successfully',
+            message: 'MarketItens returned successfully',
             code: 200
         });
 
-    } catch(err) {
+    } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
@@ -172,7 +172,7 @@ exports.readAll = async (req, res) => {
 };
 
 /**
- * Update a roomMarketItem.
+ * Update a marketItem.
  * @param {*} req 
  * @param {*} res 
  */
@@ -181,35 +181,35 @@ exports.update = async (req, res) => {
     try {
 
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
 
         let formUpdated = { ...req.body };
-    
-        // Update roomMarketItem data
-        let roomMarketItem = await RoomMarketItem.findByIdAndUpdate(req.params.id, formUpdated);
-    
+
+        // Update marketItem data
+        let marketItem = await MarketItem.findByIdAndUpdate(req.params.id, formUpdated);
+
         // Disconnect to database
         await mongoose.disconnect();
 
-        // Create roomMarketItem data to return
+        // Create marketItem data to return
         let roomTypeToFront = {
-            _id: roomMarketItem._id,
-            _createdAt: roomMarketItem._createdAt,
-            name: roomMarketItem.name,
-            type: roomMarketItem.type
+            _id: marketItem._id,
+            _createdAt: marketItem._createdAt,
+            name: marketItem.name,
+            type: marketItem.type
         };
-        
-        console.info('RoomMarketItem updated successfuly');
+
+        console.info('MarketItem updated successfuly');
         res.send({
             data: roomTypeToFront,
-            message: 'RoomMarketItem updated successfuly',
+            message: 'MarketItem updated successfuly',
             code: 200
         });
 
-    } catch(err) {
+    } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
@@ -226,7 +226,7 @@ exports.update = async (req, res) => {
 };
 
 /**
- * Delete a roomMarketItem.
+ * Delete a marketItem.
  * @param {*} req 
  * @param {*} res 
  */
@@ -235,29 +235,29 @@ exports.delete = async (req, res) => {
     try {
 
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        
-        // Delete roomMarketItem by id
-        await RoomMarketItem.findByIdAndUpdate(req.params.id, { _deletedAt: Date.now() });
-    
-        // Disconnect to database
-        await mongoose.disconnect();
-    
-        console.info('RoomMarketItem deleted successfuly');
-        res.send({
-            data: {},
-            message: 'RoomMarketItem deleted successfuly',
-            code: 200
-        });
-        
-    } catch(err) {
+
+        // Delete marketItem by id
+        await MarketItem.findByIdAndUpdate(req.params.id, { _deletedAt: Date.now() });
 
         // Disconnect to database
         await mongoose.disconnect();
-        
+
+        console.info('MarketItem deleted successfuly');
+        res.send({
+            data: {},
+            message: 'MarketItem deleted successfuly',
+            code: 200
+        });
+
+    } catch (err) {
+
+        // Disconnect to database
+        await mongoose.disconnect();
+
         console.error(err.message);
         res.send({
             data: [],

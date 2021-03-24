@@ -19,7 +19,7 @@ API of the Mordomo Digital app developed with Node and Express with Mongo as dat
   - [/auth](#auth)
   - [/room-types](#room-types)
   - [/room-tasks](#room-tasks)
-  - [/room-market-itens](#room-market-itens)
+  - [/market-itens](#market-itens)
   - [/rooms](#rooms)
 - [Author](#author)
 
@@ -129,7 +129,7 @@ Types of the room CRUD.
 
 Tasks in each room type CRUD.
 
-### /room-market-itens
+### /market-itens
 
 Market itens in each room type CRUD.
 

@@ -4,7 +4,7 @@ const fs = require('fs');
 const multer = require('multer');
 
 // Model
-const RoomTask = require('../models/room-tasks.modal');
+const RoomTask = require('../models/room-tasks.model');
 
 /**
  * Method to save image in server
@@ -29,13 +29,13 @@ exports.uploadImg = multer({ storage: storage }).single('image');
 exports.create = async (req, res) => {
 
     try {
-        
+
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        
+
         // Create image buffer to put in mongod
         let image = {
             data: fs.readFileSync(req.file.path),
@@ -47,7 +47,7 @@ exports.create = async (req, res) => {
             name: req.body.name,
             icon: image,
         });
-    
+
         // Disconnect to database
         await mongoose.disconnect();
 
@@ -58,7 +58,7 @@ exports.create = async (req, res) => {
             name: roomTask.name,
             icon: roomTask.icon,
         };
-        
+
         console.info('RoomTask created successfuly');
         res.send({
             data: roomTaskToFront,
@@ -66,7 +66,7 @@ exports.create = async (req, res) => {
             code: 200
         });
 
-    } catch(err) {
+    } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
@@ -92,16 +92,16 @@ exports.readOne = async (req, res) => {
     try {
 
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        
+
         // Get roomTask by id
         let roomTask = await RoomTask.findById(req.params.id);
-        
+
         // Check if roomTask was removed
-        if(roomTask._deletedAt) throw { message: 'RoomTask removed' };
+        if (roomTask._deletedAt) throw { message: 'RoomTask removed' };
 
         // Create roomTask data to return
         let roomTaskToFront = {
@@ -110,10 +110,10 @@ exports.readOne = async (req, res) => {
             name: roomTask.name,
             icon: roomTask.icon
         };
-        
+
         // Disconnect to database
         await mongoose.disconnect();
-        
+
         console.info('RoomTask returned successfully');
         res.send({
             data: roomTaskToFront,
@@ -121,7 +121,7 @@ exports.readOne = async (req, res) => {
             code: 200
         });
 
-    } catch(err) {
+    } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
@@ -145,13 +145,13 @@ exports.readOne = async (req, res) => {
 exports.readAll = async (req, res) => {
 
     try {
-        
+
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        
+
         // Get all roomTasks
         let roomTasks = await RoomTask.find({});
 
@@ -167,10 +167,10 @@ exports.readAll = async (req, res) => {
                 icon: roomTask.icon
             };
         });
-        
+
         // Disconnect to database
         await mongoose.disconnect();
-        
+
         console.info('RoomTasks returned successfully');
         res.send({
             data: roomTasksToFront,
@@ -178,7 +178,7 @@ exports.readAll = async (req, res) => {
             code: 200
         });
 
-    } catch(err) {
+    } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
@@ -204,7 +204,7 @@ exports.update = async (req, res) => {
     try {
 
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
@@ -217,13 +217,13 @@ exports.update = async (req, res) => {
 
         // Create roomTask in database
         let formUpdated = { ...req.body };
-        if(image){
+        if (image) {
             formUpdated['icon'] = image;
         }
-    
+
         // Update roomTask data
         let roomTask = await RoomTask.findByIdAndUpdate(req.params.id, formUpdated);
-    
+
         // Disconnect to database
         await mongoose.disconnect();
 
@@ -234,7 +234,7 @@ exports.update = async (req, res) => {
             name: roomTask.name,
             icon: roomTask.icon
         };
-        
+
         console.info('RoomTask updated successfuly');
         res.send({
             data: roomTaskToFront,
@@ -242,7 +242,7 @@ exports.update = async (req, res) => {
             code: 200
         });
 
-    } catch(err) {
+    } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
@@ -268,29 +268,29 @@ exports.delete = async (req, res) => {
     try {
 
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        
+
         // Delete roomTask by id
         await RoomTask.findByIdAndUpdate(req.params.id, { _deletedAt: Date.now() });
-    
+
         // Disconnect to database
         await mongoose.disconnect();
-    
+
         console.info('RoomTask deleted successfuly');
         res.send({
             data: {},
             message: 'RoomTask deleted successfuly',
             code: 200
         });
-        
-    } catch(err) {
+
+    } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
-        
+
         console.error(err.message);
         res.send({
             data: [],

@@ -4,33 +4,33 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 // Schema
-let RoomMarketItemSchema = new Schema({
+let MarketItemSchema = new Schema({
 
     name: {
         type: String,
         required: true,
     },
-    
+
     type: {
         type: String,
         required: true,
     },
 
-    _createdAt: { 
+    _createdAt: {
         type: Date,
         required: true,
         default: () => {
-            if(!this._createdAt) {            
+            if (!this._createdAt) {
                 return Date.now();
             }
         },
     },
 
-    _updatedAt: { 
+    _updatedAt: {
         type: Date,
         required: true,
         default: () => {
-            if(!this._updatedAt) {            
+            if (!this._updatedAt) {
                 return Date.now();
             }
         },
@@ -44,4 +44,4 @@ let RoomMarketItemSchema = new Schema({
 
 });
 
-module.exports = mongoose.model('RoomMarketItem', RoomMarketItemSchema);
+module.exports = mongoose.model('MarketItem', MarketItemSchema);

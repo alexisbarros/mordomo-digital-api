@@ -24,7 +24,6 @@ exports.create = async (req, res) => {
             name: req.body.name,
             roomType: req.body.roomType,
             tasks: req.body.tasks,
-            marketList: req.body.marketList,
             user: req.body.user,
         });
     
@@ -38,7 +37,6 @@ exports.create = async (req, res) => {
             name: room.name,
             roomType: room.roomType,
             tasks: room.tasks,
-            marketList: room.marketList,
             user: room.user,
         };
         
@@ -88,12 +86,6 @@ exports.readOne = async (req, res) => {
             populate: {
                 path: 'task'
             }
-        })
-        .populate({
-            path: 'marketList',
-            populate: {
-                path: 'item'
-            }
         }).exec();
         
         // Check if room was removed
@@ -101,9 +93,6 @@ exports.readOne = async (req, res) => {
 
         // Remove db deleted tasks
         let tasks = room.tasks.filter(el => !el._deletedAt);
-        
-        // Remove db deleted market item
-        let marketList = room.marketList.filter(el => !el._deletedAt);
 
         // Create room data to return
         let roomToFront = {
@@ -112,7 +101,6 @@ exports.readOne = async (req, res) => {
             name: room.name,
             roomType: room.roomType,
             tasks: tasks,
-            marketList: marketList,
             user: room.user
         };
         
@@ -167,12 +155,6 @@ exports.readAll = async (req, res) => {
             populate: {
                 path: 'task'
             }
-        })
-        .populate({
-            path: 'marketList',
-            populate: {
-                path: 'item'
-            }
         }).exec();
 
         // Filter room tha wasnt removed
@@ -183,9 +165,6 @@ exports.readAll = async (req, res) => {
             
             // Remove db deleted tasks
             let tasks = room.tasks.filter(el => !el._deletedAt);
-            
-            // Remove db deleted tasks
-            let marketList = room.marketList.filter(el => !el._deletedAt);
 
             return {
                 _id: room._id,
@@ -193,7 +172,6 @@ exports.readAll = async (req, res) => {
                 name: room.name,
                 roomType: room.roomType,
                 tasks: tasks,
-                marketList: marketList,
                 user: room.user,
             };
         });
@@ -254,7 +232,6 @@ exports.update = async (req, res) => {
             name: room.name,
             roomType: room.roomType,
             tasks: room.tasks,
-            marketList: room.marketList,
             user: room.user
         };
         

@@ -21,6 +21,7 @@ exports.create = async (req, res) => {
 
         // Create marketCart in database
         let marketCart = await MarketCart.create({
+            name: req.body.name,
             itens: req.body.itens,
             user: req.body.user,
         });
@@ -32,6 +33,7 @@ exports.create = async (req, res) => {
         let marketCartToFront = {
             _id: marketCart._id,
             _createdAt: marketCart._createdAt,
+            name: marketCart.name,
             itens: marketCart.itens,
             user: marketCart.user,
         };
@@ -219,6 +221,7 @@ exports.update = async (req, res) => {
         let marketCartToFront = {
             _id: marketCart._id,
             _createdAt: marketCart._createdAt,
+            name: marketCart.name,
             itens: marketCart.itens,
             user: marketCart.user
         };

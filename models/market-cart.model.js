@@ -23,6 +23,11 @@ let MarketItemSchemaWithQtd = new Schema({
 // Schema
 let MarketCartSchema = new Schema({
 
+    name: {
+        type: String,
+        required: true,
+    },
+
     itens: [
         MarketItemSchemaWithQtd
     ],

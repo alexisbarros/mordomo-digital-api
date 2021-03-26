@@ -163,6 +163,7 @@ exports.readAll = async (req, res) => {
             return {
                 _id: marketCart._id,
                 _createdAt: marketCart._createdAt,
+                name: marketCart.name,
                 itens: itens,
                 user: marketCart.user,
             };

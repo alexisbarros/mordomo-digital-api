@@ -95,6 +95,7 @@ exports.readOne = async (req, res) => {
         let marketCartToFront = {
             _id: marketCart._id,
             _createdAt: marketCart._createdAt,
+            name: marketCart.name,
             itens: itens,
             user: marketCart.user
         };

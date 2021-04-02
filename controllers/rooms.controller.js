@@ -1,5 +1,6 @@
 // Modules
 const mongoose = require('mongoose');
+const httpResponse = require('../utils/http-response');
 
 // Model
 const Room = require('../models/rooms.model');
@@ -12,9 +13,9 @@ const Room = require('../models/rooms.model');
 exports.create = async (req, res) => {
 
     try {
-        
+
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
@@ -26,7 +27,7 @@ exports.create = async (req, res) => {
             tasks: req.body.tasks,
             user: req.body.user,
         });
-    
+
         // Disconnect to database
         await mongoose.disconnect();
 
@@ -39,25 +40,15 @@ exports.create = async (req, res) => {
             tasks: room.tasks,
             user: room.user,
         };
-        
-        console.info('Room created successfuly');
-        res.send({
-            data: roomToFront,
-            message: 'Room created successfuly',
-            code: 200
-        });
 
-    } catch(err) {
+        res.send(httpResponse.ok('Room created successfuly', roomToFront));
+
+    } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: {},
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -73,23 +64,23 @@ exports.readOne = async (req, res) => {
     try {
 
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        
+
         // Get room by id
         let room = await Room.findById(req.params.id)
-        .populate('roomType')
-        .populate({
-            path: 'tasks',
-            populate: {
-                path: 'task'
-            }
-        }).exec();
-        
+            .populate('roomType')
+            .populate({
+                path: 'tasks',
+                populate: {
+                    path: 'task'
+                }
+            }).exec();
+
         // Check if room was removed
-        if(room._deletedAt) throw { message: 'Room removed' };
+        if (room._deletedAt) throw new Error('Room removed');
 
         // Remove db deleted tasks
         let tasks = room.tasks.filter(el => !el._deletedAt);
@@ -103,28 +94,18 @@ exports.readOne = async (req, res) => {
             tasks: tasks,
             user: room.user
         };
-        
-        // Disconnect to database
-        await mongoose.disconnect();
-        
-        console.info('Room returned successfully');
-        res.send({
-            data: roomToFront,
-            message: 'Room returned successfully',
-            code: 200
-        });
-
-    } catch(err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: {},
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.ok('Room returned successfully', roomToFront));
+
+    } catch (err) {
+
+        // Disconnect to database
+        await mongoose.disconnect();
+
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -138,31 +119,29 @@ exports.readOne = async (req, res) => {
 exports.readAll = async (req, res) => {
 
     try {
-        
+
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        
+
         // Get all rooms
         let rooms = await Room.find({
-            user: req.params.id
+            user: req.params.id,
+            _deletedAt: null,
         })
-        .populate('roomType')
-        .populate({
-            path: 'tasks',
-            populate: {
-                path: 'task'
-            }
-        }).exec();
-
-        // Filter room tha wasnt removed
-        let roomsToFront = rooms.filter(room => !room._deletedAt);
+            .populate('roomType')
+            .populate({
+                path: 'tasks',
+                populate: {
+                    path: 'task'
+                }
+            }).exec();
 
         // Create room data to return
-        roomsToFront = roomsToFront.map(room => {
-            
+        const roomsToFront = rooms.map(room => {
+
             // Remove db deleted tasks
             let tasks = room.tasks.filter(el => !el._deletedAt);
 
@@ -175,28 +154,18 @@ exports.readAll = async (req, res) => {
                 user: room.user,
             };
         });
-        
-        // Disconnect to database
-        await mongoose.disconnect();
-        
-        console.info('Rooms returned successfully');
-        res.send({
-            data: roomsToFront,
-            message: 'Rooms returned successfully',
-            code: 200
-        });
-
-    } catch(err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: [],
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.ok('Rooms returned successfully', roomsToFront));
+
+    } catch (err) {
+
+        // Disconnect to database
+        await mongoose.disconnect();
+
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -212,16 +181,16 @@ exports.update = async (req, res) => {
     try {
 
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
 
         let formUpdated = { ...req.body };
-    
+
         // Update room data
         let room = await Room.findByIdAndUpdate(req.params.id, formUpdated);
-    
+
         // Disconnect to database
         await mongoose.disconnect();
 
@@ -234,25 +203,15 @@ exports.update = async (req, res) => {
             tasks: room.tasks,
             user: room.user
         };
-        
-        console.info('Room updated successfuly');
-        res.send({
-            data: roomToFront,
-            message: 'Room updated successfuly',
-            code: 200
-        });
 
-    } catch(err) {
+        res.send(httpResponse.ok('Room updated successfuly', roomToFront));
+
+    } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: [],
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -268,35 +227,25 @@ exports.delete = async (req, res) => {
     try {
 
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        
+
         // Delete room by id
         await Room.findByIdAndUpdate(req.params.id, { _deletedAt: Date.now() });
-    
-        // Disconnect to database
-        await mongoose.disconnect();
-    
-        console.info('Room deleted successfuly');
-        res.send({
-            data: {},
-            message: 'Room deleted successfuly',
-            code: 200
-        });
-        
-    } catch(err) {
 
         // Disconnect to database
         await mongoose.disconnect();
-        
-        console.error(err.message);
-        res.send({
-            data: [],
-            message: err.message,
-            code: 400
-        });
+
+        res.send(httpResponse.ok('Room deleted successfuly', {}));
+
+    } catch (err) {
+
+        // Disconnect to database
+        await mongoose.disconnect();
+
+        res.send(httpResponse.error(err.message, {}));
 
     }
 

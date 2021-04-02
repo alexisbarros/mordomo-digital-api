@@ -1,5 +1,6 @@
 // Modules
 const mongoose = require('mongoose');
+const httpResponse = require('../utils/http-response');
 
 // Model
 const MenuOption = require('../models/menu-options.model');
@@ -28,30 +29,20 @@ exports.create = async (req, res) => {
         await mongoose.disconnect();
 
         // Create menuOption data to return
-        let roomTypeToFront = {
+        let menuOptionToFront = {
             _id: menuOption._id,
             _createdAt: menuOption._createdAt,
             name: menuOption.name,
         };
 
-        console.info('MenuOption created successfuly');
-        res.send({
-            data: roomTypeToFront,
-            message: 'MenuOption created successfuly',
-            code: 200
-        });
+        res.send(httpResponse.ok('MenuOption created successfuly', menuOptionToFront));
 
     } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: {},
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -76,10 +67,10 @@ exports.readOne = async (req, res) => {
         let menuOption = await MenuOption.findById(req.params.id);
 
         // Check if menuOption was removed
-        if (menuOption._deletedAt) throw { message: 'MenuOption removed' };
+        if (menuOption._deletedAt) throw new Error('MenuOption removed');
 
         // Create menuOption data to return
-        let roomTypeToFront = {
+        let menuOptionToFront = {
             _id: menuOption._id,
             _createdAt: menuOption._createdAt,
             name: menuOption.name
@@ -88,24 +79,14 @@ exports.readOne = async (req, res) => {
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.info('MenuOption returned successfully');
-        res.send({
-            data: roomTypeToFront,
-            message: 'MenuOption returned successfully',
-            code: 200
-        });
+        res.send(httpResponse.ok('MenuOption returned successfully', menuOptionToFront));
 
     } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: {},
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -127,13 +108,12 @@ exports.readAll = async (req, res) => {
         });
 
         // Get all menuOptions
-        let menuOptions = await MenuOption.find({});
-
-        // Filter menuOption tha wasnt removed
-        let roomTypesToFront = menuOptions.filter(menuOption => !menuOption._deletedAt);
+        let menuOptions = await MenuOption.find({
+            _deletedAt: null,
+        });
 
         // Create menuOption data to return
-        roomTypesToFront = roomTypesToFront.map(menuOption => {
+        const menuOptionsToFront = menuOptions.map(menuOption => {
             return {
                 _id: menuOption._id,
                 _createdAt: menuOption._createdAt,
@@ -144,24 +124,14 @@ exports.readAll = async (req, res) => {
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.info('MenuOptions returned successfully');
-        res.send({
-            data: roomTypesToFront,
-            message: 'MenuOptions returned successfully',
-            code: 200
-        });
+        res.send(httpResponse.ok('MenuOptions returned successfully', menuOptionsToFront));
 
     } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: [],
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -191,30 +161,20 @@ exports.update = async (req, res) => {
         await mongoose.disconnect();
 
         // Create menuOption data to return
-        let roomTypeToFront = {
+        let menuOptionToFront = {
             _id: menuOption._id,
             _createdAt: menuOption._createdAt,
             name: menuOption.name,
         };
 
-        console.info('MenuOption updated successfuly');
-        res.send({
-            data: roomTypeToFront,
-            message: 'MenuOption updated successfuly',
-            code: 200
-        });
+        res.send(httpResponse.ok('MenuOption updated successfuly', menuOptionToFront));
 
     } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: [],
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -241,24 +201,14 @@ exports.delete = async (req, res) => {
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.info('MenuOption deleted successfuly');
-        res.send({
-            data: {},
-            message: 'MenuOption deleted successfuly',
-            code: 200
-        });
+        res.send(httpResponse.ok('MenuOption deleted successfuly', {}));
 
     } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: [],
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 

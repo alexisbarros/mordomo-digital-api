@@ -2,6 +2,7 @@
 const mongoose = require('mongoose');
 const fs = require('fs');
 const multer = require('multer');
+const httpResponse = require('../utils/http-response');
 
 // Model
 const RoomTask = require('../models/room-tasks.model');
@@ -59,24 +60,14 @@ exports.create = async (req, res) => {
             icon: roomTask.icon,
         };
 
-        console.info('RoomTask created successfuly');
-        res.send({
-            data: roomTaskToFront,
-            message: 'RoomTask created successfuly',
-            code: 200
-        });
+        res.send(httpResponse.ok('RoomTask created successfuly', roomTaskToFront));
 
     } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: {},
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -101,7 +92,7 @@ exports.readOne = async (req, res) => {
         let roomTask = await RoomTask.findById(req.params.id);
 
         // Check if roomTask was removed
-        if (roomTask._deletedAt) throw { message: 'RoomTask removed' };
+        if (roomTask._deletedAt) throw new Error('RoomTask removed');
 
         // Create roomTask data to return
         let roomTaskToFront = {
@@ -114,24 +105,14 @@ exports.readOne = async (req, res) => {
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.info('RoomTask returned successfully');
-        res.send({
-            data: roomTaskToFront,
-            message: 'RoomTask returned successfully',
-            code: 200
-        });
+        res.send(httpResponse.ok('RoomTask returned successfully', roomTaskToFront));
 
     } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: {},
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -153,13 +134,12 @@ exports.readAll = async (req, res) => {
         });
 
         // Get all roomTasks
-        let roomTasks = await RoomTask.find({});
-
-        // Filter roomTask tha wasnt removed
-        let roomTasksToFront = roomTasks.filter(roomTask => !roomTask._deletedAt);
+        let roomTasks = await RoomTask.find({
+            _deletedAt: null,
+        });
 
         // Create roomTask data to return
-        roomTasksToFront = roomTasksToFront.map(roomTask => {
+        const roomTasksToFront = roomTasks.map(roomTask => {
             return {
                 _id: roomTask._id,
                 _createdAt: roomTask._createdAt,
@@ -171,24 +151,14 @@ exports.readAll = async (req, res) => {
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.info('RoomTasks returned successfully');
-        res.send({
-            data: roomTasksToFront,
-            message: 'RoomTasks returned successfully',
-            code: 200
-        });
+        res.send(httpResponse.ok('RoomTasks returned successfully', roomTasksToFront));
 
     } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: [],
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -235,24 +205,14 @@ exports.update = async (req, res) => {
             icon: roomTask.icon
         };
 
-        console.info('RoomTask updated successfuly');
-        res.send({
-            data: roomTaskToFront,
-            message: 'RoomTask updated successfuly',
-            code: 200
-        });
+        res.send(httpResponse.ok('RoomTask updated successfuly', roomTaskToFront));
 
     } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: [],
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -279,24 +239,14 @@ exports.delete = async (req, res) => {
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.info('RoomTask deleted successfuly');
-        res.send({
-            data: {},
-            message: 'RoomTask deleted successfuly',
-            code: 200
-        });
+        res.send(httpResponse.ok('RoomTask deleted successfuly', {}));
 
     } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: [],
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 

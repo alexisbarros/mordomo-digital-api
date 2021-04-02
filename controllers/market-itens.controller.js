@@ -1,5 +1,6 @@
 // Modules
 const mongoose = require('mongoose');
+const httpResponse = require('../utils/http-response');
 
 // Model
 const MarketItem = require('../models/market-itens.model');
@@ -29,31 +30,21 @@ exports.create = async (req, res) => {
         await mongoose.disconnect();
 
         // Create marketItem data to return
-        let roomTypeToFront = {
+        let marketItemToFront = {
             _id: marketItem._id,
             _createdAt: marketItem._createdAt,
             name: marketItem.name,
             type: marketItem.type,
         };
 
-        console.info('MarketItem created successfuly');
-        res.send({
-            data: roomTypeToFront,
-            message: 'MarketItem created successfuly',
-            code: 200
-        });
+        res.send(httpResponse.ok('MarketItem created successfuly', marketItemToFront));
 
     } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: {},
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -78,10 +69,10 @@ exports.readOne = async (req, res) => {
         let marketItem = await MarketItem.findById(req.params.id);
 
         // Check if marketItem was removed
-        if (marketItem._deletedAt) throw { message: 'MarketItem removed' };
+        if (marketItem._deletedAt) throw new Error('MarketItem removed');
 
         // Create marketItem data to return
-        let roomTypeToFront = {
+        let marketItemToFront = {
             _id: marketItem._id,
             _createdAt: marketItem._createdAt,
             name: marketItem.name,
@@ -91,24 +82,14 @@ exports.readOne = async (req, res) => {
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.info('MarketItem returned successfully');
-        res.send({
-            data: roomTypeToFront,
-            message: 'MarketItem returned successfully',
-            code: 200
-        });
+        res.send(httpResponse.ok('MarketItem returned successfully', marketItemToFront));
 
     } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: {},
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -130,13 +111,12 @@ exports.readAll = async (req, res) => {
         });
 
         // Get all marketItens
-        let marketItens = await MarketItem.find({});
-
-        // Filter marketItem tha wasnt removed
-        let roomTypesToFront = marketItens.filter(marketItem => !marketItem._deletedAt);
+        let marketItens = await MarketItem.find({
+            _deletedAt: null,
+        });
 
         // Create marketItem data to return
-        roomTypesToFront = roomTypesToFront.map(marketItem => {
+        const marketItensToFront = marketItens.map(marketItem => {
             return {
                 _id: marketItem._id,
                 _createdAt: marketItem._createdAt,
@@ -148,24 +128,14 @@ exports.readAll = async (req, res) => {
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.info('MarketItens returned successfully');
-        res.send({
-            data: roomTypesToFront,
-            message: 'MarketItens returned successfully',
-            code: 200
-        });
+        res.send(httpResponse.ok('MarketItens returned successfully', marketItensToFront));
 
     } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: [],
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -195,31 +165,21 @@ exports.update = async (req, res) => {
         await mongoose.disconnect();
 
         // Create marketItem data to return
-        let roomTypeToFront = {
+        let marketItemToFront = {
             _id: marketItem._id,
             _createdAt: marketItem._createdAt,
             name: marketItem.name,
             type: marketItem.type
         };
 
-        console.info('MarketItem updated successfuly');
-        res.send({
-            data: roomTypeToFront,
-            message: 'MarketItem updated successfuly',
-            code: 200
-        });
+        res.send(httpResponse.ok('MarketItem updated successfuly', marketItemToFront));
 
     } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: [],
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -246,24 +206,14 @@ exports.delete = async (req, res) => {
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.info('MarketItem deleted successfuly');
-        res.send({
-            data: {},
-            message: 'MarketItem deleted successfuly',
-            code: 200
-        });
+        res.send(httpResponse.ok('MarketItem deleted successfuly', {}));
 
     } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: [],
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 

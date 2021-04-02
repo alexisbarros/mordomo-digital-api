@@ -2,6 +2,7 @@
 const mongoose = require('mongoose');
 const fs = require('fs');
 const multer = require('multer');
+const httpResponse = require('../utils/http-response');
 
 // Model
 const MenuGroup = require('../models/menu-groups.model');
@@ -14,9 +15,9 @@ const MenuGroup = require('../models/menu-groups.model');
 exports.create = async (req, res) => {
 
     try {
-        
+
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
@@ -26,7 +27,7 @@ exports.create = async (req, res) => {
             name: req.body.name,
             options: req.body.options,
         });
-    
+
         // Disconnect to database
         await mongoose.disconnect();
 
@@ -37,25 +38,15 @@ exports.create = async (req, res) => {
             name: menuGroup.name,
             options: menuGroup.options,
         };
-        
-        console.info('MenuGroup created successfuly');
-        res.send({
-            data: menuGroupToFront,
-            message: 'MenuGroup created successfuly',
-            code: 200
-        });
 
-    } catch(err) {
+        res.send(httpResponse.ok('MenuGroup created successfuly', menuGroupToFront));
+
+    } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: {},
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -71,17 +62,18 @@ exports.readOne = async (req, res) => {
     try {
 
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        
+
         // Get menuGroup by id
         let menuGroup = await MenuGroup.findById(req.params.id)
-        .populate('options');
-        
+            .populate('options')
+            .exec();
+
         // Check if menuGroup was removed
-        if(menuGroup._deletedAt) throw { message: 'MenuGroup removed' };
+        if (menuGroup._deletedAt) throw new Error('MenuGroup removed');
 
         // Create menuGroup data to return
         let menuGroupToFront = {
@@ -90,28 +82,18 @@ exports.readOne = async (req, res) => {
             name: menuGroup.name,
             options: menuGroup.options,
         };
-        
-        // Disconnect to database
-        await mongoose.disconnect();
-        
-        console.info('MenuGroup returned successfully');
-        res.send({
-            data: menuGroupToFront,
-            message: 'MenuGroup returned successfully',
-            code: 200
-        });
-
-    } catch(err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: {},
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.ok('MenuGroup returned successfully', menuGroupToFront));
+
+    } catch (err) {
+
+        // Disconnect to database
+        await mongoose.disconnect();
+
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -125,22 +107,22 @@ exports.readOne = async (req, res) => {
 exports.readAll = async (req, res) => {
 
     try {
-        
+
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        
-        // Get all menuGroups
-        let menuGroups = await MenuGroup.find({})
-        .populate('options');
 
-        // Filter menuGroup tha wasnt removed
-        let menuGroupsToFront = menuGroups.filter(menuGroup => !menuGroup._deletedAt);
+        // Get all menuGroups
+        let menuGroups = await MenuGroup.find({
+            _deletedAt: null,
+        })
+            .populate('options')
+            .exec();
 
         // Create menuGroup data to return
-        menuGroupsToFront = menuGroupsToFront.map(menuGroup => {
+        const menuGroupsToFront = menuGroups.map(menuGroup => {
             return {
                 _id: menuGroup._id,
                 _createdAt: menuGroup._createdAt,
@@ -148,28 +130,18 @@ exports.readAll = async (req, res) => {
                 options: menuGroup.options,
             };
         });
-        
-        // Disconnect to database
-        await mongoose.disconnect();
-        
-        console.info('MenuGroups returned successfully');
-        res.send({
-            data: menuGroupsToFront,
-            message: 'MenuGroups returned successfully',
-            code: 200
-        });
-
-    } catch(err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: [],
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.ok('MenuGroups returned successfully', menuGroupsToFront));
+
+    } catch (err) {
+
+        // Disconnect to database
+        await mongoose.disconnect();
+
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -185,20 +157,20 @@ exports.update = async (req, res) => {
     try {
 
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
 
         // Create menuOption in database
-        let formUpdated = { 
+        let formUpdated = {
             ...req.body,
             options: req.body.options,
         };
-    
+
         // Update menuGroup data
         let menuGroup = await MenuGroup.findByIdAndUpdate(req.params.id, formUpdated);
-    
+
         // Disconnect to database
         await mongoose.disconnect();
 
@@ -209,25 +181,15 @@ exports.update = async (req, res) => {
             name: menuGroup.name,
             options: menuGroup.options,
         };
-        
-        console.info('MenuGroup updated successfuly');
-        res.send({
-            data: menuGroupToFront,
-            message: 'MenuGroup updated successfuly',
-            code: 200
-        });
 
-    } catch(err) {
+        res.send(httpResponse.ok('MenuGroup updated successfuly', menuGroupToFront));
+
+    } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: [],
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -243,35 +205,25 @@ exports.delete = async (req, res) => {
     try {
 
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        
+
         // Delete menuGroup by id
         await MenuGroup.findByIdAndUpdate(req.params.id, { _deletedAt: Date.now() });
-    
-        // Disconnect to database
-        await mongoose.disconnect();
-    
-        console.info('MenuGroup deleted successfuly');
-        res.send({
-            data: {},
-            message: 'MenuGroup deleted successfuly',
-            code: 200
-        });
-        
-    } catch(err) {
 
         // Disconnect to database
         await mongoose.disconnect();
-        
-        console.error(err.message);
-        res.send({
-            data: [],
-            message: err.message,
-            code: 400
-        });
+
+        res.send(httpResponse.ok('MenuGroup deleted successfuly', {}));
+
+    } catch (err) {
+
+        // Disconnect to database
+        await mongoose.disconnect();
+
+        res.send(httpResponse.error(err.message, {}));
 
     }
 

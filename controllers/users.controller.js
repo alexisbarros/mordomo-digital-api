@@ -1,5 +1,6 @@
 // Modules
 var mongoose = require('mongoose');
+const httpResponse = require('../utils/http-response');
 
 // Model
 const User = require('../models/users.model');
@@ -12,20 +13,20 @@ const User = require('../models/users.model');
 exports.create = async (req, res) => {
 
     try {
-        
+
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        
+
         // Create user in database
         let user = await User.create({
             email: req.body.email,
             password: req.body.password,
             isAdmin: req.body.isAdmin || false
         });
-    
+
         // Disconnect to database
         await mongoose.disconnect();
 
@@ -35,25 +36,15 @@ exports.create = async (req, res) => {
             email: user.email,
             isAdmin: user.isAdmin
         };
-        
-        console.info('User created successfuly');
-        return({
-            data: userToFront,
-            message: 'User created successfuly',
-            code: 200
-        });
 
-    } catch(err) {
+        res.send(httpResponse.ok('User created successfuly', userToFront));
+
+    } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        return({
-            data: {},
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -69,16 +60,16 @@ exports.readOne = async (req, res) => {
     try {
 
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        
+
         // Get user by id
         let user = await User.findById(req.params.id);
-        
+
         // Check if user was removed
-        if(user._deletedAt) throw { message: 'User removed' };
+        if (user._deletedAt) throw new Error('User removed');
 
         // Create user data to return
         let userToFront = {
@@ -86,28 +77,62 @@ exports.readOne = async (req, res) => {
             email: user.email,
             isAdmin: user.isAdmin
         };
-        
-        // Disconnect to database
-        await mongoose.disconnect();
-        
-        console.info('User returned successfully');
-        return({
-            data: userToFront,
-            message: 'User returned successfully',
-            code: 200
-        });
-
-    } catch(err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        return({
-            data: {},
-            message: err.message,
-            code: 400
+        res.send(httpResponse.ok('User returned successfully', userToFront));
+
+    } catch (err) {
+
+        // Disconnect to database
+        await mongoose.disconnect();
+
+        res.send(httpResponse.error(err.message, {}));
+
+    }
+
+}
+
+/**
+ * Get one user by email.
+ * @param {*} req 
+ * @param {*} res 
+ */
+exports.readOneByEmail = async (req, res) => {
+
+    try {
+
+        // Connect to database
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
         });
+
+        // Get user by email
+        let user = await User.find({
+            email: req.params.email,
+            _deletedAt: null
+        });
+
+        // Create user data to return
+        let userToFront = {
+            _id: user && user._id,
+            email: user && user.email,
+            isAdmin: user && user.isAdmin
+        };
+
+        // Disconnect to database
+        await mongoose.disconnect();
+
+        res.send(httpResponse.ok('User returned successfully', userToFront));
+
+    } catch (err) {
+
+        // Disconnect to database
+        await mongoose.disconnect();
+
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -121,18 +146,17 @@ exports.readOne = async (req, res) => {
 exports.readAll = async (req, res) => {
 
     try {
-        
+
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        
-        // Get all users
-        let users = await User.find({});
 
-        // Filter user tha wasnt removed
-        let usersToFront = users.filter(user => !user._deletedAt);
+        // Get all users
+        let users = await User.find({
+            _deletedAt: null
+        });
 
         // Create user data to return
         usersToFront = usersToFront.map(user => {
@@ -142,28 +166,18 @@ exports.readAll = async (req, res) => {
                 isAdmin: user.isAdmin
             };
         });
-        
-        // Disconnect to database
-        await mongoose.disconnect();
-        
-        console.info('Users returned successfully');
-        return({
-            data: usersToFront,
-            message: 'Users returned successfully',
-            code: 200
-        });
-
-    } catch(err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        return({
-            data: [],
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.ok('Users returned successfully', usersToFront));
+
+    } catch (err) {
+
+        // Disconnect to database
+        await mongoose.disconnect();
+
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -179,14 +193,14 @@ exports.update = async (req, res) => {
     try {
 
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-    
+
         // Update user data
         let user = await User.findByIdAndUpdate(req.params.id, { ...req.body });
-    
+
         // Disconnect to database
         await mongoose.disconnect();
 
@@ -196,25 +210,15 @@ exports.update = async (req, res) => {
             email: user.email,
             isAdmin: user.isAdmin
         };
-        
-        console.info('User updated successfuly');
-        return({
-            data: userToFront,
-            message: 'User updated successfuly',
-            code: 200
-        });
 
-    } catch(err) {
+        res.send(httpResponse.ok('User updated successfuly', userToFront));
+
+    } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        return({
-            data: [],
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -230,35 +234,25 @@ exports.delete = async (req, res) => {
     try {
 
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        
+
         // Delete user by id
         await User.findByIdAndUpdate(req.params.id, { _deletedAt: Date.now() });
-    
-        // Disconnect to database
-        await mongoose.disconnect();
-    
-        console.info('User deleted successfuly');
-        return({
-            data: {},
-            message: 'User deleted successfuly',
-            code: 200
-        });
-        
-    } catch(err) {
 
         // Disconnect to database
         await mongoose.disconnect();
-        
-        console.error(err.message);
-        return({
-            data: [],
-            message: err.message,
-            code: 400
-        });
+
+        res.send(httpResponse.ok('User deleted successfuly', {}));
+
+    } catch (err) {
+
+        // Disconnect to database
+        await mongoose.disconnect();
+
+        res.send(httpResponse.error(err.message, {}));
 
     }
 

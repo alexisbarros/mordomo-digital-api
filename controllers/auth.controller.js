@@ -2,6 +2,7 @@
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const httpResponse = require('../utils/http-response');
 
 // Controllers
 const user_controller = require('./users.controller');
@@ -19,19 +20,16 @@ exports.register = async (req, res) => {
     try {
 
         // Check if email alredy exists
-        let users = await user_controller.readAll(req, res);
-        if(
-            users.data && 
-            users.data.filter(user => user.email === req.body.email).length
-        ) throw { message: 'O e-mail informado já foi cadastrado' }
+        const users = await user_controller.readOneByEmail(req, res);
+        if (users.data._id) throw new Error('O e-mail informado já foi cadastrado');
 
         // Create a user in db
-        let user = await user_controller.create(req, res);
-        if(user.code === 400) throw { message: user.message }
+        const user = await user_controller.create(req, res);
+        if (user.code === 400) throw new Error(user.message);
 
         // Generate token
         let token = jwt.sign({ id: user.data._id, email: user.data.email }, process.env.JWT_SECRET);
-        
+
         // Create user to send to front
         let usersToFront = {
             _id: user.data._id,
@@ -40,21 +38,11 @@ exports.register = async (req, res) => {
             token: token
         };
 
-        console.info('Usuário cadastrado com sucesso');
-        res.send({
-            data: usersToFront,
-            message: 'Usuário cadastrado com sucesso',
-            code: 200
-        });
+        res.send(httpResponse.ok('Usuário cadastrado com sucesso', userToFront));
 
-    } catch(err){
+    } catch (err) {
 
-        console.error(err.message);
-        res.send({
-            data: {},
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -70,18 +58,18 @@ exports.login = async (req, res) => {
     try {
 
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
 
         // Search user
         let user = await User.findOne({ email: req.body.email });
-        if(!user) throw { message: 'Usuário não encontrado' };
-             
+        if (!user) throw new Error('Usuário não encontrado');
+
         // Check pass
         let isChecked = await bcrypt.compare(req.body.password, user.password);
-        if(isChecked){
+        if (isChecked) {
 
             // Generate token
             let token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET);
@@ -96,31 +84,21 @@ exports.login = async (req, res) => {
 
             // Disconnect to database
             await mongoose.disconnect();
-            
-            console.info('Usuário logado com sucesso');
-            res.send({
-                data: userToFront,
-                message: 'Usuário logado com sucesso.',
-                code: 200
-            })
+
+            res.send(httpResponse.ok('Usuário logado com sucesso', userToFront));
 
         } else {
 
-            throw { message: 'Senha incorreta' }
+            throw new Error('Senha incorreta');
 
         }
 
-    } catch(err) {
+    } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: {},
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -136,19 +114,19 @@ exports.loginAdmin = async (req, res) => {
     try {
 
         // Connect to database
-        await mongoose.connect(process.env.DB_CONNECTION_STRING, { 
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
 
         // Search user and check if user is admin
         let user = await User.findOne({ email: req.body.email });
-        if(!user) throw { message: 'Usuário não encontrado' };
-        if(!user.isAdmin) throw { message: 'Usuário não é administrador' };
-             
+        if (!user) throw new Error('Usuário não encontrado');
+        if (!user.isAdmin) throw new Error('Usuário não é administrador');
+
         // Check pass
         let isChecked = await bcrypt.compare(req.body.password, user.password);
-        if(isChecked){
+        if (isChecked) {
 
             // Generate token
             let token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET);
@@ -163,31 +141,21 @@ exports.loginAdmin = async (req, res) => {
 
             // Disconnect to database
             await mongoose.disconnect();
-            
-            console.info('Usuário logado com sucesso');
-            res.send({
-                data: userToFront,
-                message: 'Usuário logado com sucesso.',
-                code: 200
-            })
+
+            res.send(httpResponse.ok('Usuário logado com sucesso', userToFront));
 
         } else {
 
-            throw { message: 'Senha incorreta' }
+            throw new Error('Senha incorreta');
 
         }
 
-    } catch(err) {
+    } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: {},
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 

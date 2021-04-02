@@ -1,5 +1,6 @@
 // Modules
 const mongoose = require('mongoose');
+const httpResponse = require('../utils/http-response');
 
 // Model
 const MarketCart = require('../models/market-cart.model');
@@ -38,24 +39,14 @@ exports.create = async (req, res) => {
             user: marketCart.user,
         };
 
-        console.info('MarketCart created successfuly');
-        res.send({
-            data: marketCartToFront,
-            message: 'MarketCart created successfuly',
-            code: 200
-        });
+        res.send(httpResponse.ok('MarketCart created successfuly', marketCartToFront));
 
     } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: {},
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -86,7 +77,7 @@ exports.readOne = async (req, res) => {
             }).exec();
 
         // Check if marketCart was removed
-        if (marketCart._deletedAt) throw { message: 'MarketCart removed' };
+        if (marketCart._deletedAt) throw new Error('MarketCart removed');
 
         // Remove db deleted itens
         let itens = marketCart.itens.filter(el => !el._deletedAt);
@@ -103,24 +94,14 @@ exports.readOne = async (req, res) => {
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.info('MarketCart returned successfully');
-        res.send({
-            data: marketCartToFront,
-            message: 'MarketCart returned successfully',
-            code: 200
-        });
+        res.send(httpResponse.ok('MarketCart returned successfully', marketCartToFront));
 
     } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: {},
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -143,7 +124,8 @@ exports.readAll = async (req, res) => {
 
         // Get all marketCarts
         let marketCarts = await MarketCart.find({
-            user: req.params.id
+            user: req.params.id,
+            _deletedAt: null,
         })
             .populate({
                 path: 'itens',
@@ -152,11 +134,8 @@ exports.readAll = async (req, res) => {
                 }
             }).exec();
 
-        // Filter marketCart tha wasnt removed
-        let marketCartsToFront = marketCarts.filter(marketCart => !marketCart._deletedAt);
-
         // Create marketCart data to return
-        marketCartsToFront = marketCartsToFront.map(marketCart => {
+        const marketCartsToFront = marketCarts.map(marketCart => {
 
             // Remove db deleted itens
             let itens = marketCart.itens.filter(el => !el._deletedAt);
@@ -173,24 +152,14 @@ exports.readAll = async (req, res) => {
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.info('MarketCarts returned successfully');
-        res.send({
-            data: marketCartsToFront,
-            message: 'MarketCarts returned successfully',
-            code: 200
-        });
+        res.send(httpResponse.ok('MarketCarts returned successfully', marketCartsToFront));
 
     } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: [],
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -228,24 +197,14 @@ exports.update = async (req, res) => {
             user: marketCart.user
         };
 
-        console.info('MarketCart updated successfuly');
-        res.send({
-            data: marketCartToFront,
-            message: 'MarketCart updated successfuly',
-            code: 200
-        });
+        res.send(httpResponse.ok('MarketCart updated successfuly', marketCartToFront));
 
     } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: [],
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 
@@ -272,24 +231,14 @@ exports.delete = async (req, res) => {
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.info('MarketCart deleted successfuly');
-        res.send({
-            data: {},
-            message: 'MarketCart deleted successfuly',
-            code: 200
-        });
+        res.send(httpResponse.ok('MarketCart deleted successfuly', {}));
 
     } catch (err) {
 
         // Disconnect to database
         await mongoose.disconnect();
 
-        console.error(err.message);
-        res.send({
-            data: [],
-            message: err.message,
-            code: 400
-        });
+        res.send(httpResponse.error(err.message, {}));
 
     }
 

@@ -14,6 +14,7 @@ const marketCartRoutes = require('./routes/market-cart.route');
 const roomsRoutes = require('./routes/rooms.route');
 const menuOptionsRoutes = require('./routes/menu-options.route');
 const menuGroupsRoutes = require('./routes/menu-groups.route');
+const menuRoutes = require('./routes/menu.route');
 
 // Middlewares
 const authMiddleware = require('./middleware/auth.middleware');
@@ -43,6 +44,7 @@ app.use('/market-cart', authMiddleware, marketCartRoutes);
 app.use('/rooms', authMiddleware, roomsRoutes);
 app.use('/menu-options', authMiddleware, menuOptionsRoutes);
 app.use('/menu-groups', authMiddleware, menuGroupsRoutes);
+app.use('/menus', authMiddleware, menuRoutes);
 
 // Run server
 app.listen(port, () => {

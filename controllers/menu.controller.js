@@ -23,7 +23,8 @@ exports.create = async (req, res) => {
         // Create menu in database
         let menu = await Menu.create({
             name: req.body.name,
-            days: req.body.days,
+            day: req.body.day,
+            meals: req.body.meals,
             user: req.body.user,
         });
 
@@ -35,7 +36,8 @@ exports.create = async (req, res) => {
             _id: menu._id,
             _createdAt: menu._createdAt,
             name: menu.name,
-            days: menu.days,
+            day: menu.day,
+            meals: menu.meals,
             user: menu.user,
         };
 
@@ -70,12 +72,9 @@ exports.readOne = async (req, res) => {
         // Get menu by id
         let menu = await Menu.findById(req.params.id)
             .populate({
-                path: 'days',
+                path: 'meals',
                 populate: {
-                    path: 'meals',
-                    populate: {
-                        path: 'menuOptions',
-                    }
+                    path: 'menuOptions',
                 }
             }).exec();
 
@@ -83,15 +82,10 @@ exports.readOne = async (req, res) => {
         if (menu._deletedAt) throw new Error('Menu removed');
 
         // Remove db deleted menuOptions
-        let days = menu.days.map(day => {
+        let meals = menu.meals.map(meal => {
             return {
-                ...day,
-                meals: day.meals.map(meal => {
-                    return {
-                        ...meal,
-                        menuOptions: meal.menuOptions.filter(menuOption => !menuOption._deletedAt)
-                    }
-                })
+                ...meal,
+                menuOptions: meal.menuOptions.filter(menuOption => !menuOption._deletedAt)
             }
         });
 
@@ -100,7 +94,8 @@ exports.readOne = async (req, res) => {
             _id: menu._id,
             _createdAt: menu._createdAt,
             name: menu.name,
-            days: days,
+            day: menu.day,
+            meals: meals,
             user: menu.user
         };
 
@@ -141,12 +136,9 @@ exports.readAll = async (req, res) => {
             _deletedAt: null,
         })
             .populate({
-                path: 'days',
+                path: 'meals',
                 populate: {
-                    path: 'meals',
-                    populate: {
-                        path: 'menuOptions',
-                    }
+                    path: 'menuOptions',
                 }
             }).exec();
 
@@ -154,15 +146,10 @@ exports.readAll = async (req, res) => {
         const menusToFront = menus.map(menu => {
 
             // Remove db deleted menuOptions
-            let days = menu.days.map(day => {
+            let meals = menu.meals.map(meal => {
                 return {
-                    ...day,
-                    meals: day.meals.map(meal => {
-                        return {
-                            ...meal,
-                            menuOptions: meal.menuOptions.filter(menuOption => !menuOption._deletedAt)
-                        }
-                    })
+                    ...meal,
+                    menuOptions: meal.menuOptions.filter(menuOption => !menuOption._deletedAt)
                 }
             });
 
@@ -170,7 +157,8 @@ exports.readAll = async (req, res) => {
                 _id: menu._id,
                 _createdAt: menu._createdAt,
                 name: menu.name,
-                days: days,
+                day: menu.day,
+                meals: meals,
                 user: menu.user,
             };
         });
@@ -219,7 +207,8 @@ exports.update = async (req, res) => {
             _id: menu._id,
             _createdAt: menu._createdAt,
             name: menu.name,
-            days: menu.days,
+            day: menu.day,
+            meals: meals,
             user: menu.user
         };
 

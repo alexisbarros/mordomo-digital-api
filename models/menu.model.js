@@ -3,29 +3,6 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-// Days of the week
-let Days = new Schema({
-
-    day: {
-        type: String,
-        required: false,
-        enum: [
-            'monday',
-            'tuesday',
-            'wednesday',
-            'thursday',
-            'friday',
-            'saturday',
-            'sunday',
-        ],
-    },
-
-    meals: [
-        Meals
-    ],
-
-});
-
 // Meals
 let Meals = new Schema({
 
@@ -57,8 +34,22 @@ let MenuSchema = new Schema({
         required: true,
     },
 
-    days: [
-        Days
+    day: {
+        type: String,
+        required: false,
+        enum: [
+            'monday',
+            'tuesday',
+            'wednesday',
+            'thursday',
+            'friday',
+            'saturday',
+            'sunday',
+        ],
+    },
+
+    meals: [
+        Meals
     ],
 
     user: {

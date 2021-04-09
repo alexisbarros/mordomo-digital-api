@@ -208,7 +208,7 @@ exports.update = async (req, res) => {
             _createdAt: menu._createdAt,
             name: menu.name,
             day: menu.day,
-            meals: meals,
+            meals: menu.meals,
             user: menu.user
         };
 

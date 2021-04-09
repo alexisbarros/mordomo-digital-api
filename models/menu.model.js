@@ -10,10 +10,10 @@ let Meals = new Schema({
         type: String,
         required: false,
         enum: [
-            'breakfast',
-            'snack',
-            'lunch',
-            'dinner',
+            'a_breakfast',
+            'b_snack',
+            'c_lunch',
+            'd_dinner',
         ],
     },
 

@@ -15,6 +15,8 @@ const roomsRoutes = require('./routes/rooms.route');
 const menuOptionsRoutes = require('./routes/menu-options.route');
 const menuGroupsRoutes = require('./routes/menu-groups.route');
 const menuRoutes = require('./routes/menu.route');
+const babysitterTaskRoutes = require('./routes/babysitter-tasks.route');
+const babysitterRoutes = require('./routes/babysitter.route');
 
 // Middlewares
 const authMiddleware = require('./middleware/auth.middleware');
@@ -45,6 +47,8 @@ app.use('/rooms', authMiddleware, roomsRoutes);
 app.use('/menu-options', authMiddleware, menuOptionsRoutes);
 app.use('/menu-groups', authMiddleware, menuGroupsRoutes);
 app.use('/menus', authMiddleware, menuRoutes);
+app.use('/babysitter-tasks', authMiddleware, babysitterTaskRoutes);
+app.use('/babysitter', authMiddleware, babysitterRoutes);
 
 // Run server
 app.listen(port, () => {

@@ -34,19 +34,21 @@ let MenuSchema = new Schema({
         required: true,
     },
 
-    day: {
-        type: String,
-        required: false,
-        enum: [
-            'monday',
-            'tuesday',
-            'wednesday',
-            'thursday',
-            'friday',
-            'saturday',
-            'sunday',
-        ],
-    },
+    days: [
+        {
+            type: String,
+            required: false,
+            enum: [
+                'monday',
+                'tuesday',
+                'wednesday',
+                'thursday',
+                'friday',
+                'saturday',
+                'sunday',
+            ],
+        }
+    ],
 
     meals: [
         Meals

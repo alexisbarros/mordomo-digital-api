@@ -17,6 +17,20 @@ let Meals = new Schema({
         ],
     },
 
+    day: {
+        type: String,
+        required: false,
+        enum: [
+            'monday',
+            'tuesday',
+            'wednesday',
+            'thursday',
+            'friday',
+            'saturday',
+            'sunday',
+        ],
+    },
+
     menuOptions: [
         {
             type: mongoose.Schema.Types.ObjectId,
@@ -33,22 +47,6 @@ let MenuSchema = new Schema({
         type: String,
         required: true,
     },
-
-    days: [
-        {
-            type: String,
-            required: false,
-            enum: [
-                'monday',
-                'tuesday',
-                'wednesday',
-                'thursday',
-                'friday',
-                'saturday',
-                'sunday',
-            ],
-        }
-    ],
 
     meals: [
         Meals

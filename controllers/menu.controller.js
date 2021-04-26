@@ -23,7 +23,6 @@ exports.create = async (req, res) => {
         // Create menu in database
         let menu = await Menu.create({
             name: req.body.name,
-            days: req.body.days,
             meals: req.body.meals,
             user: req.body.user,
         });
@@ -36,7 +35,6 @@ exports.create = async (req, res) => {
             _id: menu._id,
             _createdAt: menu._createdAt,
             name: menu.name,
-            days: menu.days,
             meals: menu.meals,
             user: menu.user,
         };
@@ -94,7 +92,6 @@ exports.readOne = async (req, res) => {
             _id: menu._id,
             _createdAt: menu._createdAt,
             name: menu.name,
-            days: menu.days,
             meals: meals,
             user: menu.user
         };
@@ -157,7 +154,6 @@ exports.readAll = async (req, res) => {
                 _id: menu._id,
                 _createdAt: menu._createdAt,
                 name: menu.name,
-                days: menu.days,
                 meals: meals,
                 user: menu.user,
             };
@@ -207,7 +203,6 @@ exports.update = async (req, res) => {
             _id: menu._id,
             _createdAt: menu._createdAt,
             name: menu.name,
-            days: menu.days,
             meals: menu.meals,
             user: menu.user
         };

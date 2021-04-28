@@ -11,9 +11,11 @@ let Meals = new Schema({
         required: false,
         enum: [
             'a_breakfast',
-            'b_snack',
+            'b_morningsnack',
             'c_lunch',
-            'd_dinner',
+            'd_afternoonsnack',
+            'e_dinner',
+            'f_eveningsnack',
         ],
     },
 

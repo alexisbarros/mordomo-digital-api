@@ -17,6 +17,7 @@ const menuGroupsRoutes = require('./routes/menu-groups.route');
 const menuRoutes = require('./routes/menu.route');
 const babysitterTaskRoutes = require('./routes/babysitter-tasks.route');
 const babysitterRoutes = require('./routes/babysitter.route');
+const customRoutes = require('./routes/custom.route');
 
 // Middlewares
 const authMiddleware = require('./middleware/auth.middleware');
@@ -49,6 +50,7 @@ app.use('/menu-groups', authMiddleware, menuGroupsRoutes);
 app.use('/menus', authMiddleware, menuRoutes);
 app.use('/babysitter-tasks', authMiddleware, babysitterTaskRoutes);
 app.use('/babysitter', authMiddleware, babysitterRoutes);
+app.use('/custom', authMiddleware, customRoutes);
 
 // Run server
 app.listen(port, () => {

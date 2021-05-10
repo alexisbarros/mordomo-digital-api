@@ -77,9 +77,7 @@ exports.readOne = async (req, res) => {
         let customToFront = {
             _id: custom._id,
             _createdAt: custom._createdAt,
-            module: custom.module,
-            user: custom.user,
-            data: custom.data,
+            ...custom.data,
         };
 
         // Disconnect to database
@@ -99,7 +97,7 @@ exports.readOne = async (req, res) => {
 }
 
 /**
- * Get all custom.
+ * Get all custom of a module and a user.
  * @param {*} req 
  * @param {*} res 
  */
@@ -116,6 +114,8 @@ exports.readAll = async (req, res) => {
         // Get all custom
         let custom = await Custom.find({
             _deletedAt: null,
+            module: req.params.module,
+            user: req.params.user,
         });
 
         // Create custom data to return
@@ -123,9 +123,7 @@ exports.readAll = async (req, res) => {
             return {
                 _id: custom._id,
                 _createdAt: custom._createdAt,
-                module: custom.module,
-                user: custom.user,
-                data: custom.data,
+                ...custom.data,
             };
         });
 

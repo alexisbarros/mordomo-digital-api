@@ -18,21 +18,36 @@ let MenuGroupSchema = new Schema({
         }
     ],
 
-    _createdAt: { 
+    meals: [
+        {
+            type: String,
+            required: false,
+            enum: [
+                'a_breakfast',
+                'b_morningsnack',
+                'c_lunch',
+                'd_afternoonsnack',
+                'e_dinner',
+                'f_eveningsnack',
+            ],
+        }
+    ],
+
+    _createdAt: {
         type: Date,
         required: true,
         default: () => {
-            if(!this._createdAt) {            
+            if (!this._createdAt) {
                 return Date.now();
             }
         },
     },
 
-    _updatedAt: { 
+    _updatedAt: {
         type: Date,
         required: true,
         default: () => {
-            if(!this._updatedAt) {            
+            if (!this._updatedAt) {
                 return Date.now();
             }
         },

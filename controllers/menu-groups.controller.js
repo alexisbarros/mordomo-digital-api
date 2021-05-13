@@ -26,6 +26,7 @@ exports.create = async (req, res) => {
         let menuGroup = await MenuGroup.create({
             name: req.body.name,
             options: req.body.options,
+            meals: req.body.meals,
         });
 
         // Disconnect to database
@@ -37,6 +38,7 @@ exports.create = async (req, res) => {
             _createdAt: menuGroup._createdAt,
             name: menuGroup.name,
             options: menuGroup.options,
+            meals: menuGroup.meals,
         };
 
         res.send(httpResponse.ok('MenuGroup created successfuly', menuGroupToFront));
@@ -81,6 +83,7 @@ exports.readOne = async (req, res) => {
             _createdAt: menuGroup._createdAt,
             name: menuGroup.name,
             options: menuGroup.options,
+            meals: menuGroup.meals,
         };
 
         // Disconnect to database
@@ -128,6 +131,7 @@ exports.readAll = async (req, res) => {
                 _createdAt: menuGroup._createdAt,
                 name: menuGroup.name,
                 options: menuGroup.options,
+                meals: menuGroup.meals,
             };
         });
 
@@ -166,6 +170,7 @@ exports.update = async (req, res) => {
         let formUpdated = {
             ...req.body,
             options: req.body.options,
+            meals: req.body.meals,
         };
 
         // Update menuGroup data
@@ -180,6 +185,7 @@ exports.update = async (req, res) => {
             _createdAt: menuGroup._createdAt,
             name: menuGroup.name,
             options: menuGroup.options,
+            meals: menuGroup.meals,
         };
 
         res.send(httpResponse.ok('MenuGroup updated successfuly', menuGroupToFront));

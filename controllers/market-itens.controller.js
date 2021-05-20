@@ -24,6 +24,7 @@ exports.create = async (req, res) => {
         let marketItem = await MarketItem.create({
             name: req.body.name,
             type: req.body.type,
+            user: req.body.user,
         });
 
         // Disconnect to database
@@ -35,6 +36,7 @@ exports.create = async (req, res) => {
             _createdAt: marketItem._createdAt,
             name: marketItem.name,
             type: marketItem.type,
+            user: marketItem.user,
         };
 
         res.send(httpResponse.ok('MarketItem created successfuly', marketItemToFront));
@@ -76,7 +78,8 @@ exports.readOne = async (req, res) => {
             _id: marketItem._id,
             _createdAt: marketItem._createdAt,
             name: marketItem.name,
-            type: marketItem.type
+            type: marketItem.type,
+            user: marketItem.user,
         };
 
         // Disconnect to database
@@ -113,6 +116,10 @@ exports.readAll = async (req, res) => {
         // Get all marketItens
         let marketItens = await MarketItem.find({
             _deletedAt: null,
+            $or: [
+                { 'user': null },
+                { 'user': req.params.userId },
+            ]
         });
 
         // Create marketItem data to return
@@ -121,7 +128,8 @@ exports.readAll = async (req, res) => {
                 _id: marketItem._id,
                 _createdAt: marketItem._createdAt,
                 name: marketItem.name,
-                type: marketItem.type
+                type: marketItem.type,
+                user: marketItem.user,
             };
         });
 
@@ -169,7 +177,8 @@ exports.update = async (req, res) => {
             _id: marketItem._id,
             _createdAt: marketItem._createdAt,
             name: marketItem.name,
-            type: marketItem.type
+            type: marketItem.type,
+            user: marketItem.user,
         };
 
         res.send(httpResponse.ok('MarketItem updated successfuly', marketItemToFront));

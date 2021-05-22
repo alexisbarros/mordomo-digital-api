@@ -31,7 +31,7 @@ exports.register = async (req, res) => {
         let token = jwt.sign({ id: user.data._id, email: user.data.email }, process.env.JWT_SECRET);
 
         // Create user to send to front
-        let usersToFront = {
+        let userToFront = await {
             _id: user.data._id,
             email: user.data.email,
             isAdmin: user.data.isAdmin,

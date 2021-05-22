@@ -34,11 +34,15 @@ exports.create = async (req, res) => {
         // Disconnect to database
         await mongoose.disconnect();
 
+        // Generate token
+        let token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET);
+
         // Create user data to return
         let userToFront = {
             _id: user._id,
             email: user.email,
-            isAdmin: user.isAdmin
+            isAdmin: user.isAdmin,
+            token: token,
         };
 
         res.send(httpResponse.ok('User created successfuly', userToFront));

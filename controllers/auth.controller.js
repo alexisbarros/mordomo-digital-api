@@ -17,30 +17,8 @@ const User = require('../models/users.model');
  */
 exports.register = async (req, res) => {
 
-    try {
-
-        // Create a user in db
-        const user = await user_controller.create(req, res);
-        if (user.code === 400) throw new Error(user.message);
-
-        // Generate token
-        let token = jwt.sign({ id: user.data._id, email: user.data.email }, process.env.JWT_SECRET);
-
-        // Create user to send to front
-        let userToFront = await {
-            _id: user.data._id,
-            email: user.data.email,
-            isAdmin: user.data.isAdmin,
-            token: token
-        };
-
-        res.send(httpResponse.ok('Usuário cadastrado com sucesso', userToFront));
-
-    } catch (err) {
-
-        res.send(httpResponse.error(err.message, {}));
-
-    }
+    // Create a user in db
+    await user_controller.create(req, res);
 
 }
 

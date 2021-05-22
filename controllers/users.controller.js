@@ -1,4 +1,5 @@
 // Modules
+const jwt = require('jsonwebtoken');
 var mongoose = require('mongoose');
 const httpResponse = require('../utils/http-response');
 

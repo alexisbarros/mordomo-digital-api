@@ -19,10 +19,6 @@ exports.register = async (req, res) => {
 
     try {
 
-        // Check if email alredy exists
-        const users = await user_controller.readOneByEmail(req, res);
-        if (users.data._id) throw new Error('O e-mail informado já foi cadastrado');
-
         // Create a user in db
         const user = await user_controller.create(req, res);
         if (user.code === 400) throw new Error(user.message);

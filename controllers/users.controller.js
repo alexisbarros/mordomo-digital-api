@@ -20,6 +20,10 @@ exports.create = async (req, res) => {
             useUnifiedTopology: true
         });
 
+        // Search user
+        let localizedUser = await User.findOne({ email: req.body.email });
+        if (localizedUser) throw new Error('E-mail já cadastrado');
+
         // Create user in database
         let user = await User.create({
             email: req.body.email,

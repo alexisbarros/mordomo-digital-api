@@ -118,7 +118,7 @@ exports.readAll = async (req, res) => {
             _deletedAt: null,
             $or: [
                 { 'user': null },
-                { 'user': (req.params.userId || null) },
+                { 'user': req.params.userId },
             ]
         });
 

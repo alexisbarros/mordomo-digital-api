@@ -16,6 +16,12 @@ let MarketItemSchema = new Schema({
         required: true,
     },
 
+    group: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'MarketItemGroup',
+        required: false
+    },
+
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

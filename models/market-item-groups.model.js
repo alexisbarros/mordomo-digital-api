@@ -44,4 +44,4 @@ let MarketItemGroupSchema = new Schema({
 
 });
 
-module.exports = mongoose.model('RoomType', MarketItemGroupSchema);
+module.exports = mongoose.model('MarketItemGroup', MarketItemGroupSchema);

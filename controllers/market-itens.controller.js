@@ -24,6 +24,7 @@ exports.create = async (req, res) => {
         let marketItem = await MarketItem.create({
             name: req.body.name,
             type: req.body.type,
+            group: req.body.group,
             user: req.body.user,
         });
 
@@ -35,6 +36,7 @@ exports.create = async (req, res) => {
             _id: marketItem._id,
             _createdAt: marketItem._createdAt,
             name: marketItem.name,
+            group: marketItem.group,
             type: marketItem.type,
             user: marketItem.user,
         };
@@ -68,7 +70,7 @@ exports.readOne = async (req, res) => {
         });
 
         // Get marketItem by id
-        let marketItem = await MarketItem.findById(req.params.id);
+        let marketItem = await MarketItem.findById(req.params.id).populate('group').exec();
 
         // Check if marketItem was removed
         if (marketItem._deletedAt) throw new Error('MarketItem removed');
@@ -79,6 +81,7 @@ exports.readOne = async (req, res) => {
             _createdAt: marketItem._createdAt,
             name: marketItem.name,
             type: marketItem.type,
+            group: marketItem.group,
             user: marketItem.user,
         };
 
@@ -120,7 +123,7 @@ exports.readAll = async (req, res) => {
                 { 'user': null },
                 { 'user': req.params.userId },
             ]
-        });
+        }).populate('group').exec();
 
         // Create marketItem data to return
         const marketItensToFront = marketItens.map(marketItem => {
@@ -129,6 +132,7 @@ exports.readAll = async (req, res) => {
                 _createdAt: marketItem._createdAt,
                 name: marketItem.name,
                 type: marketItem.type,
+                group: marketItem.group,
                 user: marketItem.user,
             };
         });
@@ -177,6 +181,7 @@ exports.update = async (req, res) => {
             _id: marketItem._id,
             _createdAt: marketItem._createdAt,
             name: marketItem.name,
+            group: marketItem.group,
             type: marketItem.type,
             user: marketItem.user,
         };

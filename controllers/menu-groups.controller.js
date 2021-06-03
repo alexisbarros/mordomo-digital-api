@@ -46,8 +46,8 @@ exports.create = async (req, res) => {
         // Create menuGroup in database
         let menuGroup = await MenuGroup.create({
             name: req.body.name,
-            options: req.body.options,
-            meals: req.body.meals,
+            options: JSON.parse(req.body.options),
+            meals: JSON.parse(req.body.meals),
             icon: image,
         });
 
@@ -200,8 +200,8 @@ exports.update = async (req, res) => {
         // Create menuOption in database
         let formUpdated = {
             ...req.body,
-            options: req.body.options,
-            meals: req.body.meals,
+            options: JSON.parse(req.body.options),
+            meals: JSON.parse(req.body.meals),
         };
         if (image) {
             formUpdated['icon'] = image;

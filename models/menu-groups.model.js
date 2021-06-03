@@ -33,6 +33,11 @@ let MenuGroupSchema = new Schema({
         }
     ],
 
+    icon: {
+        data: Buffer,
+        contentType: String,
+    },
+
     _createdAt: {
         type: Date,
         required: true,

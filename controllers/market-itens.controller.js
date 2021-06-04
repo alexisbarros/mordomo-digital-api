@@ -123,7 +123,9 @@ exports.readAll = async (req, res) => {
                 { 'user': null },
                 { 'user': req.params.userId },
             ]
-        }).populate('group').exec();
+        })
+            .populate({ path: 'group', select: '-icon' })
+            .exec();
 
         // Create marketItem data to return
         const marketItensToFront = marketItens.map(marketItem => {

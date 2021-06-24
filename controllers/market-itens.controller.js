@@ -217,7 +217,8 @@ exports.delete = async (req, res) => {
         });
 
         // Delete marketItem by id
-        await MarketItem.findByIdAndUpdate(req.params.id, { _deletedAt: Date.now() });
+        await MarketItem.findByIdAndDelete(req.params.id);
+        // await MarketItem.findByIdAndUpdate(req.params.id, { _deletedAt: Date.now() });
 
         // Disconnect to database
         await mongoose.disconnect();

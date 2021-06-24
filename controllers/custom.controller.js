@@ -205,7 +205,8 @@ exports.delete = async (req, res) => {
         });
 
         // Delete custom by id
-        await Custom.findByIdAndUpdate(req.params.id, { _deletedAt: Date.now() });
+        await Custom.findByIdAndDelete(req.params.id);
+        // await Custom.findByIdAndUpdate(req.params.id, { _deletedAt: Date.now() });
 
         // Disconnect to database
         await mongoose.disconnect();

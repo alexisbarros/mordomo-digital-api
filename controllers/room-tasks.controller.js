@@ -47,6 +47,10 @@ exports.create = async (req, res) => {
         let roomTask = await RoomTask.create({
             name: req.body.name,
             icon: image,
+            frequency: req.body.frequency,
+            weekdays: req.body.weekdays,
+            day: req.body.day,
+            date: req.body.date,
         });
 
         // Disconnect to database
@@ -58,6 +62,10 @@ exports.create = async (req, res) => {
             _createdAt: roomTask._createdAt,
             name: roomTask.name,
             icon: roomTask.icon,
+            frequency: roomTask.frequency,
+            weekdays: roomTask.weekdays,
+            day: roomTask.day,
+            date: roomTask.date,
         };
 
         res.send(httpResponse.ok('RoomTask created successfuly', roomTaskToFront));
@@ -99,7 +107,11 @@ exports.readOne = async (req, res) => {
             _id: roomTask._id,
             _createdAt: roomTask._createdAt,
             name: roomTask.name,
-            icon: roomTask.icon
+            icon: roomTask.icon,
+            frequency: roomTask.frequency,
+            weekdays: roomTask.weekdays,
+            day: roomTask.day,
+            date: roomTask.date,
         };
 
         // Disconnect to database
@@ -144,7 +156,11 @@ exports.readAll = async (req, res) => {
                 _id: roomTask._id,
                 _createdAt: roomTask._createdAt,
                 name: roomTask.name,
-                icon: roomTask.icon
+                icon: roomTask.icon,
+                frequency: roomTask.frequency,
+                weekdays: roomTask.weekdays,
+                day: roomTask.day,
+                date: roomTask.date,
             };
         });
 
@@ -202,7 +218,11 @@ exports.update = async (req, res) => {
             _id: roomTask._id,
             _createdAt: roomTask._createdAt,
             name: roomTask.name,
-            icon: roomTask.icon
+            icon: roomTask.icon,
+            frequency: roomTask.frequency,
+            weekdays: roomTask.weekdays,
+            day: roomTask.day,
+            date: roomTask.date,
         };
 
         res.send(httpResponse.ok('RoomTask updated successfuly', roomTaskToFront));
@@ -234,7 +254,8 @@ exports.delete = async (req, res) => {
         });
 
         // Delete roomTask by id
-        await RoomTask.findByIdAndUpdate(req.params.id, { _deletedAt: Date.now() });
+        await RoomTask.findByIdAndDelete(req.params.id);
+        // await RoomTask.findByIdAndUpdate(req.params.id, { _deletedAt: Date.now() });
 
         // Disconnect to database
         await mongoose.disconnect();

@@ -236,7 +236,8 @@ exports.delete = async (req, res) => {
         });
 
         // Delete menu by id
-        await Menu.findByIdAndUpdate(req.params.id, { _deletedAt: Date.now() });
+        await Menu.findByIdAndDelete(req.params.id);
+        // await Menu.findByIdAndUpdate(req.params.id, { _deletedAt: Date.now() });
 
         // Disconnect to database
         await mongoose.disconnect();

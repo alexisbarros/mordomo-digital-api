@@ -196,7 +196,8 @@ exports.delete = async (req, res) => {
         });
 
         // Delete babysitterTask by id
-        await BabysitterTask.findByIdAndUpdate(req.params.id, { _deletedAt: Date.now() });
+        await BabysitterTask.findByIdAndDelete(req.params.id);
+        // await BabysitterTask.findByIdAndUpdate(req.params.id, { _deletedAt: Date.now() });
 
         // Disconnect to database
         await mongoose.disconnect();

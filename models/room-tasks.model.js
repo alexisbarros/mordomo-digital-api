@@ -16,21 +16,50 @@ let RoomTaskSchema = new Schema({
         contentType: String,
     },
 
-    _createdAt: { 
+    frequency: {
+        type: String,
+        required: false,
+        enum: [
+            'Daily',
+            'Weekly',
+            'Monthly',
+            'Yearly'
+        ],
+        default: 'Daily'
+    },
+
+    weekdays: [
+        {
+            type: String,
+            required: false,
+        }
+    ],
+
+    day: {
+        type: String,
+        required: false,
+    },
+
+    date: {
+        type: String,
+        required: false,
+    },
+
+    _createdAt: {
         type: Date,
         required: true,
         default: () => {
-            if(!this._createdAt) {            
+            if (!this._createdAt) {
                 return Date.now();
             }
         },
     },
 
-    _updatedAt: { 
+    _updatedAt: {
         type: Date,
         required: true,
         default: () => {
-            if(!this._updatedAt) {            
+            if (!this._updatedAt) {
                 return Date.now();
             }
         },

@@ -252,7 +252,8 @@ exports.delete = async (req, res) => {
         });
 
         // Delete menuGroup by id
-        await MenuGroup.findByIdAndUpdate(req.params.id, { _deletedAt: Date.now() });
+        await MenuGroup.findByIdAndDelete(req.params.id);
+        // await MenuGroup.findByIdAndUpdate(req.params.id, { _deletedAt: Date.now() });
 
         // Disconnect to database
         await mongoose.disconnect();

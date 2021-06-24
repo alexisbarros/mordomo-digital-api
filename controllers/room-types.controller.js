@@ -246,7 +246,8 @@ exports.delete = async (req, res) => {
         });
 
         // Delete roomType by id
-        await RoomType.findByIdAndUpdate(req.params.id, { _deletedAt: Date.now() });
+        await RoomType.findByIdAndDelete(req.params.id);
+        // await RoomType.findByIdAndUpdate(req.params.id, { _deletedAt: Date.now() });
 
         // Disconnect to database
         await mongoose.disconnect();

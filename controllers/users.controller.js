@@ -84,6 +84,7 @@ exports.readOne = async (req, res) => {
         let userToFront = {
             _id: user._id,
             email: user.email,
+            username: user.username,
             isAdmin: user.isAdmin
         };
 
@@ -128,6 +129,7 @@ exports.readOneByEmail = async (req, res) => {
         let userToFront = {
             _id: user && user._id,
             email: user && user.email,
+            username: user && user.username,
             isAdmin: user && user.isAdmin
         };
 
@@ -172,6 +174,7 @@ exports.readAll = async (req, res) => {
             return {
                 _id: user._id,
                 email: user.email,
+                username: user.username,
                 isAdmin: user.isAdmin
             };
         });
@@ -217,6 +220,7 @@ exports.update = async (req, res) => {
         let userToFront = {
             _id: user._id,
             email: user.email,
+            username: user.username,
             isAdmin: user.isAdmin
         };
 
@@ -249,7 +253,8 @@ exports.delete = async (req, res) => {
         });
 
         // Delete user by id
-        await User.findByIdAndUpdate(req.params.id, { _deletedAt: Date.now() });
+        await User.findByIdAndDelete(req.params.id);
+        // await User.findByIdAndUpdate(req.params.id, { _deletedAt: Date.now() });
 
         // Disconnect to database
         await mongoose.disconnect();

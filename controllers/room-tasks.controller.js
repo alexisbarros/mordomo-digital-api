@@ -47,10 +47,7 @@ exports.create = async (req, res) => {
         let roomTask = await RoomTask.create({
             name: req.body.name,
             icon: image,
-            frequency: req.body.frequency,
-            weekdays: req.body.weekdays,
-            day: req.body.day,
-            date: req.body.date,
+            defaultFrequency: req.body.defaultFrequency,
         });
 
         // Disconnect to database
@@ -62,10 +59,7 @@ exports.create = async (req, res) => {
             _createdAt: roomTask._createdAt,
             name: roomTask.name,
             icon: roomTask.icon,
-            frequency: roomTask.frequency,
-            weekdays: roomTask.weekdays,
-            day: roomTask.day,
-            date: roomTask.date,
+            defaultFrequency: roomTask.defaultFrequency,
         };
 
         res.send(httpResponse.ok('RoomTask created successfuly', roomTaskToFront));
@@ -108,10 +102,7 @@ exports.readOne = async (req, res) => {
             _createdAt: roomTask._createdAt,
             name: roomTask.name,
             icon: roomTask.icon,
-            frequency: roomTask.frequency,
-            weekdays: roomTask.weekdays,
-            day: roomTask.day,
-            date: roomTask.date,
+            defaultFrequency: roomTask.defaultFrequency,
         };
 
         // Disconnect to database
@@ -157,10 +148,7 @@ exports.readAll = async (req, res) => {
                 _createdAt: roomTask._createdAt,
                 name: roomTask.name,
                 icon: roomTask.icon,
-                frequency: roomTask.frequency,
-                weekdays: roomTask.weekdays,
-                day: roomTask.day,
-                date: roomTask.date,
+                defaultFrequency: roomTask.defaultFrequency,
             };
         });
 
@@ -219,10 +207,7 @@ exports.update = async (req, res) => {
             _createdAt: roomTask._createdAt,
             name: roomTask.name,
             icon: roomTask.icon,
-            frequency: roomTask.frequency,
-            weekdays: roomTask.weekdays,
-            day: roomTask.day,
-            date: roomTask.date,
+            defaultFrequency: roomTask.defaultFrequency,
         };
 
         res.send(httpResponse.ok('RoomTask updated successfuly', roomTaskToFront));

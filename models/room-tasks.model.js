@@ -3,17 +3,13 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-// Schema
-let RoomTaskSchema = new Schema({
+// Frequency Schema
+let FrequencySchema = new Schema({
 
-    name: {
-        type: String,
-        required: true,
-    },
-
-    icon: {
-        data: Buffer,
-        contentType: String,
+    roomType: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'RoomType',
+        required: true
     },
 
     frequency: {
@@ -23,6 +19,7 @@ let RoomTaskSchema = new Schema({
             'Daily',
             'Weekly',
             'Monthly',
+            'WeekInMonth',
             'Yearly'
         ],
         default: 'Daily'
@@ -44,6 +41,29 @@ let RoomTaskSchema = new Schema({
         type: String,
         required: false,
     },
+
+    weekOfTheMonth: {
+        type: String,
+        required: false,
+    },
+});
+
+// Schema
+let RoomTaskSchema = new Schema({
+
+    name: {
+        type: String,
+        required: true,
+    },
+
+    icon: {
+        data: Buffer,
+        contentType: String,
+    },
+
+    defaultFrequency: [
+        FrequencySchema,
+    ],
 
     _createdAt: {
         type: Date,

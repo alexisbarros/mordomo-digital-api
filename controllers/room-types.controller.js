@@ -142,7 +142,8 @@ exports.readAll = async (req, res) => {
         let roomTypes = await RoomType.find({
             _deletedAt: null
         })
-            .populate('tasks')
+            // .populate('tasks')
+            .populate({ path: 'tasks', select: '-icon' })
             .exec();
 
         // Create roomType data to return

@@ -139,7 +139,7 @@ exports.readAll = async (req, res) => {
         // Get all roomTasks
         let roomTasks = await RoomTask.find({
             _deletedAt: null,
-        });
+        }).select('-icon');
 
         // Create roomTask data to return
         const roomTasksToFront = roomTasks.map(roomTask => {

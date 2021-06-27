@@ -47,7 +47,7 @@ exports.create = async (req, res) => {
         let roomTask = await RoomTask.create({
             name: req.body.name,
             icon: image,
-            defaultFrequency: req.body.defaultFrequency,
+            defaultFrequency: JSON.parse(req.body.defaultFrequency),
         });
 
         // Disconnect to database
@@ -190,7 +190,10 @@ exports.update = async (req, res) => {
         } : null
 
         // Create roomTask in database
-        let formUpdated = { ...req.body };
+        let formUpdated = {
+            ...req.body,
+            defaultFrequency: JSON.parse(req.body.defaultFrequency),
+        };
         if (image) {
             formUpdated['icon'] = image;
         }

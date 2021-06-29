@@ -20,6 +20,7 @@ let FrequencySchema = new Schema({
             'Weekly',
             'Monthly',
             'WeekInMonth',
+            'Quarterly',
             'Yearly'
         ],
         default: 'Daily'

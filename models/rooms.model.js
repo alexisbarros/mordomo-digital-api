@@ -19,6 +19,8 @@ let TaskSchemaWithFrequency = new Schema({
             'Daily',
             'Weekly',
             'Monthly',
+            'WeekInMonth',
+            'Quarterly',
             'Yearly'
         ],
         default: 'Daily'
@@ -37,6 +39,11 @@ let TaskSchemaWithFrequency = new Schema({
     },
 
     date: {
+        type: String,
+        required: false,
+    },
+
+    weekOfTheMonth: {
         type: String,
         required: false,
     },

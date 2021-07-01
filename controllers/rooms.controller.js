@@ -55,6 +55,40 @@ exports.create = async (req, res) => {
 };
 
 /**
+ * Register many rooms in db.
+ * @param {*} req 
+ * @param {*} res 
+ */
+exports.createMany = async (req, res) => {
+
+    try {
+
+        // Connect to database
+        await mongoose.connect(process.env.DB_CONNECTION_STRING, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        });
+
+        // Create many rooms in database
+        let room = await Room.insertMany(req.body.arrayOfRooms);
+
+        // Disconnect to database
+        await mongoose.disconnect();
+
+        res.send(httpResponse.ok('Room created successfuly', {}));
+
+    } catch (err) {
+
+        // Disconnect to database
+        await mongoose.disconnect();
+
+        res.send(httpResponse.error(err.message, {}));
+
+    }
+
+};
+
+/**
  * Get one room by id.
  * @param {*} req 
  * @param {*} res 

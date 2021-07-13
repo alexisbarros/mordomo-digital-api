@@ -168,9 +168,7 @@ exports.readAll = async (req, res) => {
             .populate('roomType')
             .populate({
                 path: 'tasks',
-                populate: {
-                    path: 'task'
-                }
+                populate: { path: 'task', select: '-icon' }
             }).exec();
 
         // Create room data to return

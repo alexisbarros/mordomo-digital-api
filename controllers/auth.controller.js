@@ -53,7 +53,8 @@ exports.login = async (req, res) => {
                 _id: user._id,
                 email: user.email,
                 isAdmin: user.isAdmin,
-                token: token
+                token: token,
+                username: user.username,
             };
 
             // Disconnect to database

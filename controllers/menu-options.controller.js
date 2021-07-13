@@ -23,6 +23,7 @@ exports.create = async (req, res) => {
         // Create menuOption in database
         let menuOption = await MenuOption.create({
             name: req.body.name,
+            user: req.body.user,
         });
 
         // Disconnect to database
@@ -33,6 +34,7 @@ exports.create = async (req, res) => {
             _id: menuOption._id,
             _createdAt: menuOption._createdAt,
             name: menuOption.name,
+            user: menuOption.user,
         };
 
         res.send(httpResponse.ok('MenuOption created successfuly', menuOptionToFront));
@@ -73,7 +75,8 @@ exports.readOne = async (req, res) => {
         let menuOptionToFront = {
             _id: menuOption._id,
             _createdAt: menuOption._createdAt,
-            name: menuOption.name
+            name: menuOption.name,
+            user: menuOption.user,
         };
 
         // Disconnect to database
@@ -110,6 +113,10 @@ exports.readAll = async (req, res) => {
         // Get all menuOptions
         let menuOptions = await MenuOption.find({
             _deletedAt: null,
+            $or: [
+                { 'user': null },
+                { 'user': req.params.userId },
+            ]
         });
 
         // Create menuOption data to return
@@ -117,7 +124,8 @@ exports.readAll = async (req, res) => {
             return {
                 _id: menuOption._id,
                 _createdAt: menuOption._createdAt,
-                name: menuOption.name
+                name: menuOption.name,
+                user: menuOption.user,
             };
         });
 
@@ -165,6 +173,7 @@ exports.update = async (req, res) => {
             _id: menuOption._id,
             _createdAt: menuOption._createdAt,
             name: menuOption.name,
+            user: menuOption.user,
         };
 
         res.send(httpResponse.ok('MenuOption updated successfuly', menuOptionToFront));
